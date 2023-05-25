@@ -18,6 +18,7 @@ namespace Api {
         return get<ScrapData>("scrap-url", `url=${url}`)
     }
 
+    // export async function getAllProducts(categoryId: number)
 
 
 

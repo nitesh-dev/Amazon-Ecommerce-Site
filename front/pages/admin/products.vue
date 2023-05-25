@@ -8,9 +8,10 @@ import { ScrapData } from '../api/apiDataType';
 const productUrl = ref("")
 const affiliateUrl = ref("")
 const scrapData = ref(new ScrapData())
+const isLoaded = ref(true)
 
 
-enum Status{
+enum Status {
     Ideal,
     Scrap,
     Submit
@@ -18,8 +19,9 @@ enum Status{
 
 const status = ref<Status>(Status.Ideal)
 
-
-
+async function loadData(){
+    
+}
 
 
 
@@ -60,301 +62,308 @@ function adjustTextareaHeight(target: EventTarget | null) {
 
 </script>
 <template>
-    <section class="container panel">
-        <h2>Add Product</h2>
-        <div class="add-product">
-            <form method="get" @submit.prevent="startScrapping">
-                <input type="url" placeholder="Product url" v-model="productUrl" required>
-                <input type="url" placeholder="Affiliate url" v-model="affiliateUrl" required>
-                <button type="submit">
-                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M11.883 3.007 12 3a1 1 0 0 1 .993.883L13 4v7h7a1 1 0 0 1 .993.883L21 12a1 1 0 0 1-.883.993L20 13h-7v7a1 1 0 0 1-.883.993L12 21a1 1 0 0 1-.993-.883L11 20v-7H4a1 1 0 0 1-.993-.883L3 12a1 1 0 0 1 .883-.993L4 11h7V4a1 1 0 0 1 .883-.993L12 3l-.117.007Z" />
-                    </svg>
-                </button>
-            </form>
-        </div>
-    </section>
-
-    <section class="container" v-if="status == Status.Scrap">
+    <div class="loader-holder" v-if="!isLoaded">
         <div class="loader"></div>
-    </section>
+    </div>
 
-    <section class="container scrap" v-if="status == Status.Submit">
-        <h2>Scrap Data</h2>
-        <h3>Basic Info</h3>
-        <div class="scrap-data">
-            <p>Title</p>
-            <textarea v-model="scrapData.info.title" @input="adjustTextareaHeight($event.target)"></textarea>
-        </div>
-        <div class="parent">
-            <div class="scrap-data">
-                <p>Rating</p>
-                <input type="text" v-model="scrapData.info.rating">
+
+    <div v-if="isLoaded">
+        <section class="container panel">
+            <h2>Add Product</h2>
+            <div class="add-product">
+                <form method="get" @submit.prevent="startScrapping">
+                    <input type="url" placeholder="Product url" v-model="productUrl" required>
+                    <input type="url" placeholder="Affiliate url" v-model="affiliateUrl" required>
+                    <button type="submit">
+                        <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M11.883 3.007 12 3a1 1 0 0 1 .993.883L13 4v7h7a1 1 0 0 1 .993.883L21 12a1 1 0 0 1-.883.993L20 13h-7v7a1 1 0 0 1-.883.993L12 21a1 1 0 0 1-.993-.883L11 20v-7H4a1 1 0 0 1-.993-.883L3 12a1 1 0 0 1 .883-.993L4 11h7V4a1 1 0 0 1 .883-.993L12 3l-.117.007Z" />
+                        </svg>
+                    </button>
+                </form>
             </div>
+        </section>
+
+        <section class="container" v-if="status == Status.Scrap">
+            <div class="loader"></div>
+        </section>
+
+        <section class="container scrap" v-if="status == Status.Submit">
+            <h2>Scrap Data</h2>
+            <h3>Basic Info</h3>
             <div class="scrap-data">
-                <p>Reviews</p>
-                <input type="text" v-model="scrapData.info.reviewCount">
+                <p>Title</p>
+                <textarea v-model="scrapData.info.title" @input="adjustTextareaHeight($event.target)"></textarea>
             </div>
-        </div>
-        <div class="parent">
-            <div class="scrap-data">
-                <p>Discount Price</p>
-                <input type="text" v-model="scrapData.info.currentPrice">
+            <div class="parent">
+                <div class="scrap-data">
+                    <p>Rating</p>
+                    <input type="text" v-model="scrapData.info.rating">
+                </div>
+                <div class="scrap-data">
+                    <p>Reviews</p>
+                    <input type="text" v-model="scrapData.info.reviewCount">
+                </div>
             </div>
-            <div class="scrap-data">
-                <p>Real Price</p>
-                <input type="text" v-model="scrapData.info.discountPrice">
+            <div class="parent">
+                <div class="scrap-data">
+                    <p>Discount Price</p>
+                    <input type="text" v-model="scrapData.info.currentPrice">
+                </div>
+                <div class="scrap-data">
+                    <p>Real Price</p>
+                    <input type="text" v-model="scrapData.info.discountPrice">
+                </div>
             </div>
-        </div>
 
-        <!-- More info -->
-        <div class="table-holder" style="margin-top: 1rem;">
-            <h3>More Info</h3>
-            <table>
-                <colgroup>
-                    <col style="width: 4rem;">
-                    <col style="width: auto;">
-                    <col style="width: auto;">
-                    <col style="width: 5rem;">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Heading</th>
-                        <th>Content</th>
-                        <th>Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <!-- More info -->
+            <div class="table-holder" style="margin-top: 1rem;">
+                <h3>More Info</h3>
+                <table>
+                    <colgroup>
+                        <col style="width: 4rem;">
+                        <col style="width: auto;">
+                        <col style="width: auto;">
+                        <col style="width: 5rem;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Heading</th>
+                            <th>Content</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                    <tr v-for="item, index in scrapData.smallInfo" :key="index">
-                        <td>{{ index }}</td>
-                        <td><input type="text" v-model="item.heading" /></td>
-                        <td><input type="text" v-model="item.content" /></td>
+                        <tr v-for="item, index in scrapData.smallInfo" :key="index">
+                            <td>{{ index }}</td>
+                            <td><input type="text" v-model="item.heading" /></td>
+                            <td><input type="text" v-model="item.content" /></td>
 
-                        <td>
-                            <button class="delete">
-                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-
-        <!-- Technical details -->
-        <div class="table-holder" style="margin-top: 1rem;">
-            <h3>Technical Details</h3>
-            <table>
-                <colgroup>
-                    <col style="width: 4rem;">
-                    <col style="width: auto;">
-                    <col style="width: auto;">
-                    <col style="width: 5rem;">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Heading</th>
-                        <th>Content</th>
-                        <th>Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    <tr v-for="item, index in scrapData.technicalDetails" :key="index">
-                        <td>{{ index }}</td>
-                        <td><input type="text" v-model="item.heading" /></td>
-                        <td><input type="text" v-model="item.content" /></td>
-
-                        <td>
-                            <button class="delete">
-                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- About item -->
-        <div class="table-holder" style="margin-top: 1rem;">
-            <h3>About Items</h3>
-            <table>
-                <colgroup>
-                    <col style="width: 4rem;">
-                    <col style="width: auto;">
-                    <col style="width: 5rem;">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Content</th>
-                        <th>Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    <tr v-for="item, index in scrapData.aboutItem" :key="index">
-                        <td>{{ index }}</td>
-                        <td><textarea v-model="scrapData.aboutItem[index]"
-                                @input="adjustTextareaHeight($event.target)"></textarea></td>
-
-                        <td>
-                            <button class="delete">
-                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Featured images -->
-        <div class="table-holder" style="margin-top: 1rem;">
-            <h3>Featured Images</h3>
-            <table>
-                <colgroup>
-                    <col style="width: 4rem;">
-                    <col style="width: auto;">
-                    <col style="width: 5rem;">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>URI</th>
-                        <th>Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    <tr v-for="item, index in scrapData.featureImages">
-                        <td>{{ index }}</td>
-                        <td>{{ item }}</td>
-                        <td>
-                            <button class="delete">
-                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Landing images -->
-        <div class="table-holder" style="margin-top: 1rem;">
-            <h3>Landing Images</h3>
-            <table>
-                <colgroup>
-                    <col style="width: 4rem;">
-                    <col style="width: auto;">
-                    <col style="width: 5rem;">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>URI</th>
-                        <th>Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    <tr v-for="item, index in scrapData.landingImages">
-                        <td>{{ index }}</td>
-                        <td>{{ item }}</td>
-                        <td>
-                            <button class="delete">
-                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <button>Submit</button>
-
-    </section>
+                            <td>
+                                <button class="delete">
+                                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
 
-    <section class="container">
-        <div class="table-holder">
-            <table>
-                <colgroup>
-                    <col style="width: 4rem;">
-                    <col style="width: auto;">
-                    <col style="width: auto;">
-                    <col style="width: auto;">
-                    <col style="width: auto;">
-                    <col style="width: auto;">
-                    <col style="width: 5rem;">
-                </colgroup>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Click</th>
-                        <th>Views</th>
-                        <th>Date</th>
-                        <th>Detail</th>
-                        <th>Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <!-- Technical details -->
+            <div class="table-holder" style="margin-top: 1rem;">
+                <h3>Technical Details</h3>
+                <table>
+                    <colgroup>
+                        <col style="width: 4rem;">
+                        <col style="width: auto;">
+                        <col style="width: auto;">
+                        <col style="width: 5rem;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Heading</th>
+                            <th>Content</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                    <tr>
-                        <td>1</td>
-                        <td>Nitesh</td>
-                        <td>10</td>
-                        <td>19</td>
-                        <td>12 dec 2022</td>
-                        <td>
-                            <button>
-                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M13.267 4.209a.75.75 0 0 0-1.034 1.086l6.251 5.955H3.75a.75.75 0 0 0 0 1.5h14.734l-6.251 5.954a.75.75 0 0 0 1.034 1.087l7.42-7.067a.996.996 0 0 0 .3-.58.758.758 0 0 0-.001-.29.995.995 0 0 0-.3-.578l-7.419-7.067Z" />
-                                </svg>
-                            </button>
-                        </td>
+                        <tr v-for="item, index in scrapData.technicalDetails" :key="index">
+                            <td>{{ index }}</td>
+                            <td><input type="text" v-model="item.heading" /></td>
+                            <td><input type="text" v-model="item.content" /></td>
 
-                        <td>
-                            <button class="delete">
-                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
-                                </svg>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                            <td>
+                                <button class="delete">
+                                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-    </section>
+            <!-- About item -->
+            <div class="table-holder" style="margin-top: 1rem;">
+                <h3>About Items</h3>
+                <table>
+                    <colgroup>
+                        <col style="width: 4rem;">
+                        <col style="width: auto;">
+                        <col style="width: 5rem;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Content</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr v-for="item, index in scrapData.aboutItem" :key="index">
+                            <td>{{ index }}</td>
+                            <td><textarea v-model="scrapData.aboutItem[index]"
+                                    @input="adjustTextareaHeight($event.target)"></textarea></td>
+
+                            <td>
+                                <button class="delete">
+                                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Featured images -->
+            <div class="table-holder" style="margin-top: 1rem;">
+                <h3>Featured Images</h3>
+                <table>
+                    <colgroup>
+                        <col style="width: 4rem;">
+                        <col style="width: auto;">
+                        <col style="width: 5rem;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>URI</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr v-for="item, index in scrapData.featureImages">
+                            <td>{{ index }}</td>
+                            <td>{{ item }}</td>
+                            <td>
+                                <button class="delete">
+                                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Landing images -->
+            <div class="table-holder" style="margin-top: 1rem;">
+                <h3>Landing Images</h3>
+                <table>
+                    <colgroup>
+                        <col style="width: 4rem;">
+                        <col style="width: auto;">
+                        <col style="width: 5rem;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>URI</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr v-for="item, index in scrapData.landingImages">
+                            <td>{{ index }}</td>
+                            <td>{{ item }}</td>
+                            <td>
+                                <button class="delete">
+                                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <button>Submit</button>
+
+        </section>
+
+
+        <section class="container">
+            <div class="table-holder">
+                <table>
+                    <colgroup>
+                        <col style="width: 4rem;">
+                        <col style="width: auto;">
+                        <col style="width: auto;">
+                        <col style="width: auto;">
+                        <col style="width: auto;">
+                        <col style="width: auto;">
+                        <col style="width: 5rem;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Click</th>
+                            <th>Views</th>
+                            <th>Date</th>
+                            <th>Detail</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td>1</td>
+                            <td>Nitesh</td>
+                            <td>10</td>
+                            <td>19</td>
+                            <td>12 dec 2022</td>
+                            <td>
+                                <button>
+                                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M13.267 4.209a.75.75 0 0 0-1.034 1.086l6.251 5.955H3.75a.75.75 0 0 0 0 1.5h14.734l-6.251 5.954a.75.75 0 0 0 1.034 1.087l7.42-7.067a.996.996 0 0 0 .3-.58.758.758 0 0 0-.001-.29.995.995 0 0 0-.3-.578l-7.419-7.067Z" />
+                                    </svg>
+                                </button>
+                            </td>
+
+                            <td>
+                                <button class="delete">
+                                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+    </div>
 </template>
 <style scoped>
 /* -------------------- scrap detail ----------------- */
