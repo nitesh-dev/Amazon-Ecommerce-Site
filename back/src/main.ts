@@ -90,6 +90,35 @@ app.get('/', (req, res) => {
 })
 
 
+app.get('/category/:id', async (req, res) => {
+
+    const id = parseInt(req.params.id)
+    const data = await mongoAPI.getCategory(id)
+    if(data == null){
+        res.status(404).send("Not Found")
+    }else{
+        res.status(200).send(data)
+    }
+    
+})
+
+app.get('/all-category', async (req, res) => {
+
+    const data = await mongoAPI.getAllCategory()
+    if(data == null){
+        res.status(404).send("Not Found")
+    }else{
+        res.status(200).send(data)
+    }
+})
+
+
+app.get('/home', async (req, res)=>{
+    
+})
+
+
+
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)

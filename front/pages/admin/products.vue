@@ -22,6 +22,12 @@
     </section>
 
     <section class="container">
+        
+
+
+    </section>
+
+    <section class="container">
         <div class="table-holder">
             <table>
                 <thead>
@@ -66,7 +72,6 @@
                 </tbody>
             </table>
         </div>
-
 
     </section>
 </template>
