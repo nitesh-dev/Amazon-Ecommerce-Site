@@ -72,13 +72,12 @@ function addProduct() {
 app.get('/scrap-url', async (req, res) => {
 
     let url = req.query.url as string;
-    console.log("scrapping")
     const data = await startScrapping(url)
 
     if(data == null){
         res.status(400).send("Unable to scrap")
     }else{
-        res.status(200).send(data)
+        res.status(200).json(data)
     }
     
 })
@@ -114,7 +113,7 @@ app.get('/all-category', async (req, res) => {
 
 
 app.get('/home', async (req, res)=>{
-    
+
 })
 
 

@@ -2,15 +2,70 @@
 // import { runDatabase } from '../../lib/mongodb'
 // runDatabase()
 
+import Api from '../api/api'
+import { ScrapData } from '../api/apiDataType';
+
+const productUrl = ref("")
+const affiliateUrl = ref("")
+const scrapData = ref(new ScrapData())
+
+
+enum Status{
+    Ideal,
+    Scrap,
+    Submit
+}
+
+const status = ref<Status>(Status.Ideal)
+
+
+
+
+
+
+async function startScrapping() {
+
+    status.value = Status.Scrap
+    const res = await Api.getScrapData(productUrl.value)
+    if (res.isError) {
+        alert("Unable to scrap | " + res.error)
+    } else {
+        if (res.result != null) {
+            status.value = Status.Submit
+            scrapData.value = res.result
+            await nextTick()
+            adjustAllTextareaHeight()
+        } else {
+            alert("Scrap empty data")
+        }
+
+    }
+
+}
+
+function adjustAllTextareaHeight() {
+    document.querySelectorAll("textarea").forEach(textarea => {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    });
+
+}
+
+function adjustTextareaHeight(target: EventTarget | null) {
+    if (target == null) return
+    const textarea = target as HTMLTextAreaElement
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+}
 
 </script>
 <template>
     <section class="container panel">
         <h2>Add Product</h2>
         <div class="add-product">
-            <form method="post">
-                <input type="url" placeholder="Product url" required>
-                <input type="url" placeholder="Affiliate url" required>
+            <form method="get" @submit.prevent="startScrapping">
+                <input type="url" placeholder="Product url" v-model="productUrl" required>
+                <input type="url" placeholder="Affiliate url" v-model="affiliateUrl" required>
                 <button type="submit">
                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -21,15 +76,241 @@
         </div>
     </section>
 
-    <section class="container">
-        
+    <section class="container" v-if="status == Status.Scrap">
+        <div class="loader"></div>
+    </section>
 
+    <section class="container scrap" v-if="status == Status.Submit">
+        <h2>Scrap Data</h2>
+        <h3>Basic Info</h3>
+        <div class="scrap-data">
+            <p>Title</p>
+            <textarea v-model="scrapData.info.title" @input="adjustTextareaHeight($event.target)"></textarea>
+        </div>
+        <div class="parent">
+            <div class="scrap-data">
+                <p>Rating</p>
+                <input type="text" v-model="scrapData.info.rating">
+            </div>
+            <div class="scrap-data">
+                <p>Reviews</p>
+                <input type="text" v-model="scrapData.info.reviewCount">
+            </div>
+        </div>
+        <div class="parent">
+            <div class="scrap-data">
+                <p>Discount Price</p>
+                <input type="text" v-model="scrapData.info.currentPrice">
+            </div>
+            <div class="scrap-data">
+                <p>Real Price</p>
+                <input type="text" v-model="scrapData.info.discountPrice">
+            </div>
+        </div>
+
+        <!-- More info -->
+        <div class="table-holder" style="margin-top: 1rem;">
+            <h3>More Info</h3>
+            <table>
+                <colgroup>
+                    <col style="width: 4rem;">
+                    <col style="width: auto;">
+                    <col style="width: auto;">
+                    <col style="width: 5rem;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Heading</th>
+                        <th>Content</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr v-for="item, index in scrapData.smallInfo" :key="index">
+                        <td>{{ index }}</td>
+                        <td><input type="text" v-model="item.heading" /></td>
+                        <td><input type="text" v-model="item.content" /></td>
+
+                        <td>
+                            <button class="delete">
+                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <!-- Technical details -->
+        <div class="table-holder" style="margin-top: 1rem;">
+            <h3>Technical Details</h3>
+            <table>
+                <colgroup>
+                    <col style="width: 4rem;">
+                    <col style="width: auto;">
+                    <col style="width: auto;">
+                    <col style="width: 5rem;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Heading</th>
+                        <th>Content</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr v-for="item, index in scrapData.technicalDetails" :key="index">
+                        <td>{{ index }}</td>
+                        <td><input type="text" v-model="item.heading" /></td>
+                        <td><input type="text" v-model="item.content" /></td>
+
+                        <td>
+                            <button class="delete">
+                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- About item -->
+        <div class="table-holder" style="margin-top: 1rem;">
+            <h3>About Items</h3>
+            <table>
+                <colgroup>
+                    <col style="width: 4rem;">
+                    <col style="width: auto;">
+                    <col style="width: 5rem;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Content</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr v-for="item, index in scrapData.aboutItem" :key="index">
+                        <td>{{ index }}</td>
+                        <td><textarea v-model="scrapData.aboutItem[index]"
+                                @input="adjustTextareaHeight($event.target)"></textarea></td>
+
+                        <td>
+                            <button class="delete">
+                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Featured images -->
+        <div class="table-holder" style="margin-top: 1rem;">
+            <h3>Featured Images</h3>
+            <table>
+                <colgroup>
+                    <col style="width: 4rem;">
+                    <col style="width: auto;">
+                    <col style="width: 5rem;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>URI</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr v-for="item, index in scrapData.featureImages">
+                        <td>{{ index }}</td>
+                        <td>{{ item }}</td>
+                        <td>
+                            <button class="delete">
+                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Landing images -->
+        <div class="table-holder" style="margin-top: 1rem;">
+            <h3>Landing Images</h3>
+            <table>
+                <colgroup>
+                    <col style="width: 4rem;">
+                    <col style="width: auto;">
+                    <col style="width: 5rem;">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>URI</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr v-for="item, index in scrapData.landingImages">
+                        <td>{{ index }}</td>
+                        <td>{{ item }}</td>
+                        <td>
+                            <button class="delete">
+                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M12 1.75a3.25 3.25 0 0 1 3.245 3.066L15.25 5h5.25a.75.75 0 0 1 .102 1.493L20.5 6.5h-.796l-1.28 13.02a2.75 2.75 0 0 1-2.561 2.474l-.176.006H8.313a2.75 2.75 0 0 1-2.714-2.307l-.023-.174L4.295 6.5H3.5a.75.75 0 0 1-.743-.648L2.75 5.75a.75.75 0 0 1 .648-.743L3.5 5h5.25A3.25 3.25 0 0 1 12 1.75Zm6.197 4.75H5.802l1.267 12.872a1.25 1.25 0 0 0 1.117 1.122l.127.006h7.374c.6 0 1.109-.425 1.225-1.002l.02-.126L18.196 6.5ZM13.75 9.25a.75.75 0 0 1 .743.648L14.5 10v7a.75.75 0 0 1-1.493.102L13 17v-7a.75.75 0 0 1 .75-.75Zm-3.5 0a.75.75 0 0 1 .743.648L11 10v7a.75.75 0 0 1-1.493.102L9.5 17v-7a.75.75 0 0 1 .75-.75Zm1.75-6a1.75 1.75 0 0 0-1.744 1.606L10.25 5h3.5A1.75 1.75 0 0 0 12 3.25Z" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <button>Submit</button>
 
     </section>
+
 
     <section class="container">
         <div class="table-holder">
             <table>
+                <colgroup>
+                    <col style="width: 4rem;">
+                    <col style="width: auto;">
+                    <col style="width: auto;">
+                    <col style="width: auto;">
+                    <col style="width: auto;">
+                    <col style="width: auto;">
+                    <col style="width: 5rem;">
+                </colgroup>
                 <thead>
                     <tr>
                         <th>#</th>
@@ -76,6 +357,71 @@
     </section>
 </template>
 <style scoped>
+/* -------------------- scrap detail ----------------- */
+
+.scrap {
+    margin-bottom: 10rem;
+}
+
+.scrap>button {
+    margin-top: 2rem;
+    width: 100%;
+    border: none;
+    padding: 0.8em 1em;
+    font-size: var(--medium-font);
+    background-color: var(--color-primary);
+    border-radius: var(--radius-medium);
+    color: var(--color-on-primary);
+}
+
+.scrap>button:hover {
+    background-color: var(--color-primary-variant);
+}
+
+.scrap-data {
+    margin-bottom: 0.8rem;
+}
+
+.scrap-data textarea {
+    border: none;
+    border: 1px solid var(--color-surface-dark);
+    padding: 0.6em 1em;
+    font-size: var(--medium-font);
+    width: 100%;
+    height: auto;
+    resize: none;
+    overflow: hidden;
+
+}
+
+.scrap h2 {
+    text-align: center;
+}
+
+.parent {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.scrap-data p {
+    margin: 0.4em 0;
+    font-weight: 600;
+}
+
+.scrap-data input {
+    font-size: var(--medium-font);
+    padding: 0.5em 1em;
+    width: 100%;
+    border: none;
+    background-color: var(--color-surface-variant);
+    border: 1px solid var(--color-surface-dark);
+    border-radius: var(--radius-medium);
+    margin: 0;
+}
+
+
+
 .light {
     overflow: auto;
     margin-top: 2rem;
@@ -142,7 +488,21 @@
     overflow-x: scroll;
 }
 
-table {
+.table-holder input,
+.table-holder textarea {
+    border: none;
+    border: 1px solid var(--color-surface-dark);
+    padding: 0.4em 1em;
+    font-size: var(--medium-font);
+    background-color: transparent;
+    width: 100%;
+    height: auto;
+    resize: none;
+    overflow: hidden;
+
+}
+
+.table-holder table {
     border: none;
     border-collapse: collapse;
     width: 100%;
@@ -151,46 +511,46 @@ table {
     border-radius: var(--radius-medium);
 }
 
-thead {
+.table-holder thead {
     box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
     position: relative;
 }
 
-th {
+.table-holder th {
     padding: 1em;
     font-weight: 600;
     color: var(--color-primary);
 }
 
-td {
+.table-holder td {
     padding: 0.8em 1em;
     border-bottom: 1px solid var(--color-surface);
 }
 
-td button {
+.table-holder td button {
     border: none;
     background-color: transparent;
 }
 
-td svg {
+.table-holder td svg {
     fill: var(--color-primary)
 }
 
-td .delete svg {
+.table-holder td .delete svg {
     fill: var(--color-error);
 }
 
-td button:hover {
+.table-holder td button:hover {
     scale: 1.2;
 }
 
 
-tbody tr {
+.table-holder tbody tr {
     background-color: var(--color-surface-variant);
     cursor: pointer;
 }
 
-tbody tr:hover {
+.table-holder tbody tr:hover {
     background-color: var(--color-surface);
 
 }
