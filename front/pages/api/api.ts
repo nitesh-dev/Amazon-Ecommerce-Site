@@ -1,4 +1,4 @@
-import { CategoryData, ScrapData } from "./apiDataType"
+import { CategoryData, ProductData, ScrapData } from "./apiDataType"
 
 interface Result<T> {
     type(account_id: string, type: any): unknown
@@ -19,9 +19,23 @@ namespace Api {
     }
 
 
+    export async function getCategoryProducts() {
+        return get<ProductData[]>("all-category", '')
+    }
 
     export async function getAllCategory() {
         return get<CategoryData[]>("all-category", '')
+    }
+
+
+    export async function addCategory(adminId: string, categoryName: string, imageUrl: string) {
+        let categoryData = {
+            adminId: adminId,
+            name: categoryName,
+            url: imageUrl
+
+        }
+        return post("admin/category", "", categoryData)
     }
 
 
@@ -33,16 +47,6 @@ namespace Api {
 
         }
         return post("admin/product", "", productData)
-    }
-
-
-    export async function addCategory(adminId: string, categoryName: string) {
-        let categoryData = {
-            adminId: adminId,
-            name: categoryName
-
-        }
-        return post("admin/category", "", categoryData)
     }
 
     // export async function getAllProducts(categoryId: number)
@@ -77,8 +81,8 @@ namespace Api {
         try {
             const res = await fetch(`${apiURL}/${path}?${query}`, requestOptions);
             if (res.ok) {
-                const data = JSON.parse(await res.json()) as T
-                return createResult<T>(data, false)
+                // const data = JSON.parse() as T
+                return createResult<T>(await res.json(), false)
             } else {
                 return createResult<T>(null, true, await res.text())
             }

@@ -127,6 +127,12 @@ class MongoAPI {
     async getProducts(categoryId: number, limit: number) {
         try {
 
+            const isExist = await this.getCategory(categoryId)
+
+            if(isExist == null){
+                return null
+            }
+
             if (limit == 0) {
                 const product = await Product
                     .find({ categoryId: categoryId })

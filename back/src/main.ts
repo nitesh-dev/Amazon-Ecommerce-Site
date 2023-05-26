@@ -82,6 +82,20 @@ app.get('/scrap-url', async (req, res) => {
 
 
 
+app.get('/category-products', async (req, res) => {
+
+    let categoryId = stringToNumber(req.query.categoryId as string);
+    let limit = stringToNumber(req.query.limit as string)
+    const data = await mongoAPI.getProducts(categoryId, limit)
+
+    if (data == null) {
+        res.status(404).send("Not Found")
+    } else {
+        res.status(200).send(data)
+    }
+})
+
+
 
 
 

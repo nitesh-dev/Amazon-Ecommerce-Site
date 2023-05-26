@@ -1,11 +1,15 @@
 <script setup lang='ts'>
 import Api from '../api/api';
+import { CategoryData } from '../api/apiDataType';
+import { unixMillisecondsToDateString } from '../api/utils.js';
 
 
 const isLoaded = ref(false)
 const isSubmitting = ref(false)
 const categoryName = ref("")
 var adminId: string | null = null
+
+const categories = ref<CategoryData[]>()
 
 
 onMounted(function () {
@@ -26,28 +30,42 @@ function getAdminId() {
 }
 
 
-function loadData() {
+async function loadData() {
     isLoaded.value = false
-    // const res = await Api.
-
-
+    const res = await Api.getAllCategory()
+    isLoaded.value = true
+    if (res.isError) {
+        alert(res.error)
+    } else {
+        if (res.result == null) {
+            alert("Something went wrong!")
+        } else {
+            categories.value = res.result
+        }
+    }
 }
 
 async function createCategory() {
 
     if (adminId == null) return
     if (isSubmitting.value) return
+    let name = categoryName.value.trim()
+    if (name.length == 0) return
 
     isSubmitting.value = true
-    const res = await Api.addCategory(adminId, categoryName.value)
+    const res = await Api.addCategory(adminId, name, "http//")
     isSubmitting.value = false
 
-    if(res.isError){
+    if (res.isError) {
         alert(res.error)
-    }else{
+    } else {
         loadData()
     }
 
+}
+
+function openCategory(id: number){
+    window.location.href = `/admin/products?categoryId=${id}`
 }
 
 
@@ -63,37 +81,62 @@ async function createCategory() {
         <h2>Add category</h2>
         <div class="add-collection">
             <input type="text" placeholder="Collection name" v-model="categoryName">
-            <button>
-                <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <button @click="createCategory">
+                <div v-if="isSubmitting" class="loader2"></div>
+                <svg v-if="!isSubmitting" width="24" height="24" fill="none" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M11.883 3.007 12 3a1 1 0 0 1 .993.883L13 4v7h7a1 1 0 0 1 .993.883L21 12a1 1 0 0 1-.883.993L20 13h-7v7a1 1 0 0 1-.883.993L12 21a1 1 0 0 1-.993-.883L11 20v-7H4a1 1 0 0 1-.993-.883L3 12a1 1 0 0 1 .883-.993L4 11h7V4a1 1 0 0 1 .883-.993L12 3l-.117.007Z" />
                 </svg>
             </button>
         </div>
+
     </section>
 
     <section v-if="isLoaded" class="container">
         <div class="table-holder">
             <table>
+                <colgroup>
+                    <col style="width: 4rem;">
+                    <col style="width: auto;">
+                    <col style="width: auto;">
+                    <col style="width: auto;">
+                    <col style="width: auto;">
+                    <col style="width: auto;">
+                    <col style="width: auto;">
+                    <col style="width: 6rem;">
+                </colgroup>
                 <thead>
                     <tr>
                         <th>#</th>
                         <th>Name</th>
                         <th>Products</th>
+                        <th>Visits</th>
                         <th>Views</th>
                         <th>Date</th>
+                        <th>Detail</th>
                         <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Nitesh</td>
-                        <td>10</td>
-                        <td>29</td>
-                        <td>12 dec 2022</td>
+                    <tr v-for="category, index in categories">
+                        <td>{{ index }}</td>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.count }}</td>
+                        <td>{{ category.clicks }}</td>
+                        <td>{{ category.views }}</td>
+                        <td>{{ unixMillisecondsToDateString(category.createAt) }}</td>
                         <td>
-                            <button>
+                            <button @click="openCategory(category.categoryId)">
+                                <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M13.267 4.209a.75.75 0 0 0-1.034 1.086l6.251 5.955H3.75a.75.75 0 0 0 0 1.5h14.734l-6.251 5.954a.75.75 0 0 0 1.034 1.087l7.42-7.067a.996.996 0 0 0 .3-.58.758.758 0 0 0-.001-.29.995.995 0 0 0-.3-.578l-7.419-7.067Z" />
+                                </svg>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="delete">
                                 <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -105,7 +148,6 @@ async function createCategory() {
                 </tbody>
             </table>
         </div>
-
 
     </section>
 </template>
@@ -164,64 +206,5 @@ async function createCategory() {
 
 .add-collection button svg {
     fill: var(--color-on-primary);
-}
-
-
-
-
-/* --------------------- table ----------------------- */
-
-.table-holder {
-    margin-top: 5rem;
-    overflow-x: scroll;
-}
-
-table {
-    border: none;
-    border-collapse: collapse;
-    width: 100%;
-    text-align: left;
-    background-color: var(--color-surface-variant);
-    border-radius: var(--radius-medium);
-}
-
-thead {
-    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
-    position: relative;
-}
-
-th {
-    padding: 1em;
-    font-weight: 600;
-    color: var(--color-primary);
-}
-
-td {
-    padding: 0.8em 1em;
-    border-bottom: 1px solid var(--color-surface);
-}
-
-td button {
-    border: none;
-    background-color: transparent;
-}
-
-td svg {
-    fill: var(--color-error);
-}
-
-td button:hover {
-    scale: 1.2;
-}
-
-
-tbody tr {
-    background-color: var(--color-surface-variant);
-    cursor: pointer;
-}
-
-tbody tr:hover {
-    background-color: var(--color-surface);
-
 }
 </style>
