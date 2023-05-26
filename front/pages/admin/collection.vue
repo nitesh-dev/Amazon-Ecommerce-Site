@@ -1,10 +1,68 @@
 <script setup lang='ts'>
+import Api from '../api/api';
+
+
+const isLoaded = ref(false)
+const isSubmitting = ref(false)
+const categoryName = ref("")
+var adminId: string | null = null
+
+
+onMounted(function () {
+    // temp
+    localStorage.setItem("adminId", "abc12345")
+
+    adminId = getAdminId()
+    if (adminId == null) {
+        window.location.href = "/"
+        return
+    }
+
+    loadData()
+})
+
+function getAdminId() {
+    return localStorage.getItem("adminId")
+}
+
+
+function loadData() {
+    isLoaded.value = false
+    // const res = await Api.
+
+
+}
+
+async function createCategory() {
+
+    if (adminId == null) return
+    if (isSubmitting.value) return
+
+    isSubmitting.value = true
+    const res = await Api.addCategory(adminId, categoryName.value)
+    isSubmitting.value = false
+
+    if(res.isError){
+        alert(res.error)
+    }else{
+        loadData()
+    }
+
+}
+
+
+
+
 </script>
 <template>
-    <section class="container panel">
-        <h2>Add collection</h2>
+    <div class="loader-holder" v-if="!isLoaded">
+        <div class="loader"></div>
+    </div>
+
+    <section v-if="isLoaded" class="container panel">
+        <h2>Add category</h2>
         <div class="add-collection">
-            <input type="text" placeholder="Collection name">
+            <input type="text" placeholder="Collection name" v-model="categoryName">
             <button>
                 <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -14,7 +72,7 @@
         </div>
     </section>
 
-    <section class="container">
+    <section v-if="isLoaded" class="container">
         <div class="table-holder">
             <table>
                 <thead>
@@ -143,16 +201,16 @@ td {
     border-bottom: 1px solid var(--color-surface);
 }
 
-td button{
+td button {
     border: none;
     background-color: transparent;
 }
 
-td svg{
+td svg {
     fill: var(--color-error);
 }
 
-td button:hover{
+td button:hover {
     scale: 1.2;
 }
 
@@ -166,6 +224,4 @@ tbody tr:hover {
     background-color: var(--color-surface);
 
 }
-
-
 </style>

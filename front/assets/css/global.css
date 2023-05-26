@@ -64,8 +64,9 @@ body {
 
 /* ----------------- Loader ---------------------- */
 
+/* loader  1 */
 
-.loader-holder{
+.loader-holder {
     position: fixed;
     top: 0;
     z-index: 100;
@@ -139,5 +140,28 @@ body {
 
     50% {
         transform: scale(1.2, 1);
+    }
+}
+
+
+/* loader 2 */
+
+.loader2 {
+    margin: auto;
+    border: 2px solid var(--color-on-primary);
+    border-left-color: transparent;
+    width: 24px;
+    height: 24px;
+    animation: spin89345 1s linear infinite;
+    border-radius: 50%;
+}
+
+@keyframes spin89345 {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
     }
 }

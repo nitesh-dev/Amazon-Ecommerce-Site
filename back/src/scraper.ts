@@ -1,4 +1,6 @@
 import { JSDOM } from 'jsdom';
+import { ScrapData } from './models.js';
+import { stringToNumber } from './utils.js';
 
 export default async function startScrapping(url: string) {
 
@@ -38,20 +40,6 @@ async function fetchHtml(url: string) {
     }
 }
 
-class ScrapData {
-    info = {
-        title: "",
-        rating: "",
-        reviewCount: "",
-        currentPrice: "",
-        discountPrice: ""
-    }
-    smallInfo: { heading: string, content: string }[] = []
-    technicalDetails: { heading: string, content: string }[] = []
-    aboutItem: string[] = []
-    featureImages: string[] = []
-    landingImages: string[] = []
-}
 
 async function scrapData(htmlContent: string) {
 
@@ -59,12 +47,13 @@ async function scrapData(htmlContent: string) {
 
     let jsonData = new ScrapData()
 
+
     const title = document.querySelector("#title")?.textContent?.trim()
     const rating = document.querySelector("#acrPopover a>span")?.textContent?.trim()
     const reviewCount = document.querySelector("#acrCustomerReviewText")?.textContent?.trim().split(" ")[0]
     const priceParent = document.querySelectorAll("#corePriceDisplay_desktop_feature_div>div")
-    const currentPrice = priceParent[0].querySelector(".a-offscreen")?.textContent?.trim()
-    const discountPrice = priceParent[1].querySelector(".a-offscreen")?.textContent?.trim()
+    const discountPrice = priceParent[0].querySelector(".a-offscreen")?.textContent?.trim()
+    const totalPrice = priceParent[1].querySelector(".a-offscreen")?.textContent?.trim()
 
     // product small info
     const smallInfoRows = document.querySelectorAll("#productOverview_feature_div table tr")
@@ -126,10 +115,10 @@ async function scrapData(htmlContent: string) {
 
     // setting data
     jsonData.info.title = `${title}`
-    jsonData.info.rating = `${rating}`
-    jsonData.info.reviewCount = `${reviewCount}`
-    jsonData.info.currentPrice = `${currentPrice}`
-    jsonData.info.discountPrice = `${discountPrice}`
+    jsonData.info.rating = stringToNumber(`${rating}`)
+    jsonData.info.reviewCount = stringToNumber(`${reviewCount}`)
+    jsonData.info.price = stringToNumber(`${totalPrice}`)
+    jsonData.info.discountPrice = stringToNumber(`${discountPrice}`)
 
     jsonData.smallInfo = smallInfo
     jsonData.aboutItem = abouts

@@ -8,7 +8,30 @@ import { ScrapData } from '../api/apiDataType';
 const productUrl = ref("")
 const affiliateUrl = ref("")
 const scrapData = ref(new ScrapData())
-const isLoaded = ref(true)
+const isLoaded = ref(false)
+const isSubmitting = ref(false)
+
+var adminId = null
+onMounted(function () {
+    // temp
+    localStorage.setItem("adminId", "abc12345")
+
+    adminId = getAdminId()
+    if (adminId == null) {
+        window.location.href = "/"
+        return
+    }
+
+    loadData()
+})
+
+
+
+function getAdminId() {
+    return localStorage.getItem("adminId")
+}
+
+
 
 
 enum Status {
@@ -19,11 +42,19 @@ enum Status {
 
 const status = ref<Status>(Status.Ideal)
 
-async function loadData(){
+
+async function loadData() {
     
 }
 
 
+
+function getCategoryId() {
+
+    const currentUrl = window.location.href;
+    const url = new URL(currentUrl);
+    return url.searchParams.get("categoryId");
+}
 
 async function startScrapping() {
 
@@ -44,6 +75,24 @@ async function startScrapping() {
     }
 
 }
+
+async function submitProduct() {
+
+    if (isSubmitting.value) return
+    const categoryId = getCategoryId()
+
+    if (categoryId == null) {
+        alert("Category Not found")
+        return
+    }
+
+    isSubmitting.value = true
+    //const res = await Api.addProduct()
+
+
+}
+
+
 
 function adjustAllTextareaHeight() {
     document.querySelectorAll("textarea").forEach(textarea => {
@@ -302,7 +351,10 @@ function adjustTextareaHeight(target: EventTarget | null) {
                 </table>
             </div>
 
-            <button>Submit</button>
+            <button @click="submitProduct">
+                <span v-if="!isSubmitting">Submit</span>
+                <div v-if="isSubmitting" class="loader2"></div>
+            </button>
 
         </section>
 

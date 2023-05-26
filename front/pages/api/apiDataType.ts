@@ -13,3 +13,13 @@ export class ScrapData {
     featureImages: string[] = []
     landingImages: string[] = []
 }
+
+
+export interface CategoryData {
+    _id: string
+    categoryId: number,
+    clicks: number,
+    views: number,
+    createAt: number,
+    name: string,
+}

@@ -17,22 +17,38 @@ class MongoAPI {
         return isConnected
     }
 
+
+
+
+
+    // ------------------ Account -------------------
+    async getAdmin() {
+        try {
+            const db = mongoose.connection.useDb("shop_cart");
+            const collection = db.collection("accounts");
+            const account = await collection.findOne();
+            console.log("fetch account")
+            return account;
+
+        } catch (error) {
+            console.error('Error saving product:', error);
+            throw error;
+        }
+
+    }
+
+
+
+
+
+
+
     // --------- category ---------------
 
     async addCategory(categoryData: CategoryData) {
 
-        const category = new Category({
-            categoryId: categoryData.categoryId,
-            clicks: categoryData.clicks,
-            views: categoryData.views,
-            createAt: categoryData.createAt,
-            name: categoryData.name
-        })
-
         try {
-            const db = mongoose.connection.useDb("shop_cart");
-            const collection = db.collection("categories");
-            const newCategory = await collection.insertOne(category);
+            const newCategory = await Category.create(categoryData);
             console.log("category added")
             return newCategory;
         } catch (error) {
@@ -44,9 +60,7 @@ class MongoAPI {
 
     async getCategory(categoryId: number) {
         try {
-            const db = mongoose.connection.useDb("shop_cart");
-            const collection = db.collection("categories");
-            const category = await collection.findOne({ categoryId: categoryId });
+            const category = await Category.findOne({ categoryId: categoryId }).select({ _id: 0, __v: 0 }).lean()
             console.log("fetch category")
             return category;
 
@@ -58,9 +72,7 @@ class MongoAPI {
 
     async getAllCategory() {
         try {
-            const db = mongoose.connection.useDb("shop_cart");
-            const collection = db.collection("categories");
-            const categories = await collection.find().toArray();
+            const categories = await Category.find().select({ _id: 0, __v: 0 }).lean()
             return categories;
 
         } catch (error) {
@@ -70,29 +82,27 @@ class MongoAPI {
     }
 
 
-    // ------------ Account -----------------
+
+
+
+
+
+
+
+
+
+    // ------------ Products -----------------
 
     async addProduct(productData: ProductData) {
 
-        const product = new Product({
-            categoryId: productData.categoryId,
-            productId: productData.productId,
-            clicks: productData.clicks,
-            views: productData.views,
-            createAt: productData.createAt,
-            name: productData.name,
-            rating: productData.rating,
-            reviewCount: productData.reviewCount,
-            currentPrice: productData.currentPrice,
-            discountPrice: productData.discountPrice,
-            affiliateUrl: productData.affiliateUrl,
-            allDetail: productData.allDetail
-        })
-
         try {
-            const db = mongoose.connection.useDb("shop_cart");
-            const collection = db.collection("products");
-            const newProduct = await collection.insertOne(product);
+            const newProduct = await Product.create(productData);
+
+            await Category.findOneAndUpdate(
+                { categoryId: productData.categoryId },
+                { $inc: { clicks: 1, views: 1 } }
+            );
+
             console.log("product added")
             return newProduct;
         } catch (error) {
@@ -103,9 +113,8 @@ class MongoAPI {
 
     async getProduct(productId: number) {
         try {
-            const db = mongoose.connection.useDb("shop_cart");
-            const collection = db.collection("products");
-            const product = await collection.findOne({ productId: productId });
+
+            const product = await Product.findOne({ productId: productId });
             console.log("fetch product")
             return product;
 
@@ -117,20 +126,17 @@ class MongoAPI {
 
     async getProducts(categoryId: number, limit: number) {
         try {
-            const db = mongoose.connection.useDb("shop_cart");
-            const collection = db.collection("products");
+
             if (limit == 0) {
-                const product = await collection
+                const product = await Product
                     .find({ categoryId: categoryId })
-                    .toArray()
                 return product;
 
             } else {
-                const product = await collection
+                const product = await Product
                     .find({ categoryId: categoryId })
                     .sort({ views: -1 })
                     .limit(limit)
-                    .toArray()
                 return product;
             }
 

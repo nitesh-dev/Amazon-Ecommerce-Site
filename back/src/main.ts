@@ -1,5 +1,5 @@
 import express from 'express'
-import { generateId } from './utils.js'
+import { generateId, stringToNumber } from './utils.js'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import MongoAPI from './mongo.js'
@@ -28,93 +28,165 @@ app.use((req, res, next) => {
 
 
 
+app.post('/admin/*',async (req, res, next) => {
+    if (!isMongoConnected) {
+        res.status(400).send("Database connection error")
+    } else {
+        try {
+            let adminId = req.body.adminId
+            if(await isAdmin(adminId)){
+                next()
+            }else{
+                res.status(403).send("You don't have access")
+            }
+    
+        } catch (error) {
+            res.status(400).send(error)
+        }
+    }
+})
+
+
+
+
+
 
 // -------------------- Coding part ----------------
 
 const mongoAPI = new MongoAPI()
 var isMongoConnected = await mongoAPI.connectMongoose(host!)
 
-const emptyProduct: ProductData = {
-    categoryId: 0,
-    name: 'nitehs',
-    rating: 4,
-    reviewCount: 112,
-    currentPrice: 'd',
-    discountPrice: 'ddd',
-    affiliateUrl: 'd',
-    allDetail: 'd',
-    productId: 0,
-    clicks: 0,
-    views: 0,
-    createAt: 0
-};
-
-
-const category: CategoryData = {
-    name: 'test collection',
-    categoryId: 0,
-    clicks: 0,
-    views: 0,
-    createAt: 0
-}
-
-function addProduct() {
-    mongoAPI.addProduct(emptyProduct)
-    mongoAPI.addCategory(category)
-
-}
 
 
 
 
+app.get('/', (req, res) => {
+    res.send('Hello World!')
+})
 
+// --------------------- Scrap -------------------
 
 app.get('/scrap-url', async (req, res) => {
 
     let url = req.query.url as string;
     const data = await startScrapping(url)
 
-    if(data == null){
+    if (data == null) {
         res.status(400).send("Unable to scrap")
-    }else{
+    } else {
         res.status(200).json(data)
     }
-    
+
 })
 
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-    addProduct()
-})
 
 
+
+
+
+// --------------------- Category ------------------
 app.get('/category/:id', async (req, res) => {
 
     const id = parseInt(req.params.id)
     const data = await mongoAPI.getCategory(id)
-    if(data == null){
+    if (data == null) {
         res.status(404).send("Not Found")
-    }else{
+    } else {
         res.status(200).send(data)
     }
-    
+
 })
 
 app.get('/all-category', async (req, res) => {
 
     const data = await mongoAPI.getAllCategory()
-    if(data == null){
+    if (data == null) {
         res.status(404).send("Not Found")
-    }else{
+    } else {
         res.status(200).send(data)
     }
 })
 
-
-app.get('/home', async (req, res)=>{
+app.get('/home', async (req, res) => {
 
 })
+
+
+
+
+
+
+
+
+
+
+
+// ------------------------ Admin -----------------------------
+
+app.post('/admin/category', async (req, res) => {
+
+    let categoryName = req.body.name
+    let imageUrl = req.body.url
+    const id = generateId()
+    let data: CategoryData = {
+        categoryId: id,
+        clicks: 0,
+        views: 0,
+        createAt: id,
+        name: categoryName,
+        imageUrl: imageUrl,
+        count: 0
+    }
+
+    const result = await mongoAPI.addCategory(data)
+    res.status(200).send(result)
+    
+})
+
+
+async function isAdmin(adminId: number) {
+    let admin = await mongoAPI.getAdmin()
+    if (admin == null) {
+        return false
+    } else {
+        if (adminId == (admin as any).accountId) {
+            return true
+        }
+    }
+
+    return false
+}
+
+
+app.post('/admin/product', async (req, res) => {
+
+    let categoryId = req.body.categoryId
+    let data = req.body.data
+    const id = generateId()
+
+    const product: ProductData = {
+        categoryId: categoryId,
+        name: "",
+        rating: 4,
+        reviewCount: 112,
+        price: 0,
+        discountPrice: 0,
+        affiliateUrl: 'd',
+        allDetail: 'd',
+        productId: 0,
+        clicks: 0,
+        views: 0,
+        createAt: 0
+    };
+
+    // const result = await mongoAPI.addProduct(product)
+    console.log(data)
+    res.status(200).send(data)
+    
+})
+
+
 
 
 
