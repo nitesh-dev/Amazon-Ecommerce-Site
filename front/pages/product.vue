@@ -80,13 +80,13 @@ function showLandingImage(index: number) {
 function getStarImage(max: number) {
     const rating = productData.value?.rating
 
-    if(rating == undefined) return "/icons/empty_star.svg"
+    if (rating == undefined) return "/icons/empty_star.svg"
 
     if (rating < max && rating > (max - 10)) {
         return '/icons/half_star.svg';
-    }else if(rating >= max){
+    } else if (rating >= max) {
         return '/icons/full_star.svg';
-    }else{
+    } else {
         return '/icons/empty_star.svg';
     }
 }
@@ -95,6 +95,8 @@ function getStarImage(max: number) {
 
 </script>
 <template>
+    <Header v-if="isLoaded" />
+
     <div class="loader-holder" v-if="!isLoaded">
         <div class="loader"></div>
     </div>
@@ -151,7 +153,6 @@ function getStarImage(max: number) {
             </div>
 
         </section>
-        
         <section v-if="productMoreDetail?.aboutItem.length != 0" class="about-container">
             <h2>About this item</h2>
             <ul>
@@ -177,6 +178,8 @@ function getStarImage(max: number) {
             <img v-for="url in productMoreDetail?.featureImages" :src="urlToFeaturesUrl(url)">
         </section>
     </div>
+
+    <Footer v-if="isLoaded" />
 </template>
 <style scoped>
 .product-container {
@@ -415,5 +418,24 @@ function getStarImage(max: number) {
     margin: 0;
     display: block;
 
+}
+
+@media only screen and (max-width: 800px) {
+    .product-container {
+        grid-template-columns: 100%;
+    }
+
+    .product-container .image-container .image-holder {
+        max-width: 500px;
+        margin: auto;
+    }
+
+    .product-container .thumbnail-container>div {
+        justify-content: center;
+    }
+
+    .product-container h3 {
+        font-size: var(--medium-font);
+    }
 }
 </style>
