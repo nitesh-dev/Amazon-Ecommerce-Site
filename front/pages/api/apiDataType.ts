@@ -8,6 +8,7 @@ export class SimpleScrapData {
 }
 
 export class ScrapData {
+    scrapUrl = ""
     info = {
         title: "",
         rating: 0,

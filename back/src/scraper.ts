@@ -7,7 +7,7 @@ export default async function startScrapping(url: string) {
     let html = await fetchHtml(url)
     if (html.isSuccess == true) {
         console.log("url extracted")
-        let json = await scrapData(html.data as string)
+        let json = await scrapData(html.data as string, url)
         console.log("completed")
         return json
     } else {
@@ -41,11 +41,12 @@ async function fetchHtml(url: string) {
 }
 
 
-async function scrapData(htmlContent: string) {
+async function scrapData(htmlContent: string, scrapUrl: string) {
 
     let document = new JSDOM(htmlContent).window.document
 
     let jsonData = new ScrapData()
+    jsonData.scrapUrl = scrapUrl
 
 
     const title = document.querySelector("#title")?.textContent?.trim()

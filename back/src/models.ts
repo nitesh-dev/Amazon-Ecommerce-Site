@@ -11,6 +11,7 @@ export class SimpleScrapData {
 }
 
 export class ScrapData {
+  scrapUrl = ""
   info = {
     title: "",
     rating: 0,
@@ -25,6 +26,7 @@ export class ScrapData {
   landingImages: string[] = []
 
   toObject(data: ScrapData){
+    this.scrapUrl = data.scrapUrl
     this.info = data.info
     this.smallInfo = data.smallInfo
     this.technicalDetails = data.technicalDetails
@@ -66,7 +68,8 @@ export interface ProductData {
   discountPrice: number,
   affiliateUrl: string,
   allDetail: string,
-  imageUrl: string
+  imageUrl: string,
+  scrapUrl: string
 }
 
 const productSchema = new Schema({
@@ -84,6 +87,7 @@ const productSchema = new Schema({
   affiliateUrl: { type: String, required: true },
   allDetail: { type: String, required: true },
   imageUrl: { type: String, required: true },
+  scrapUrl: { type: String, required: true },
 
 });
 

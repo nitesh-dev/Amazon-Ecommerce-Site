@@ -213,6 +213,8 @@ app.post('/admin/product', async (req, res) => {
         let data = new ScrapData().toObject(req.body.data as ScrapData)
         const id = generateId()
 
+        console.log(data.scrapUrl + "  dddd")
+
         const product: ProductData = {
             categoryId: categoryId,
             name: data.info.title,
@@ -226,7 +228,8 @@ app.post('/admin/product', async (req, res) => {
             clicks: 0,
             views: 0,
             createAt: id,
-            imageUrl: imageUrl
+            imageUrl: imageUrl,
+            scrapUrl: data.scrapUrl
         };
 
         const result = await mongoAPI.addProduct(product)
