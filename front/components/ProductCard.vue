@@ -26,7 +26,6 @@
 </template>
 <style scoped>
 .category-card {
-    position: relative;
     background-color: var(--color-surface);
     border-radius: var(--radius-medium);
     border: 1px solid var(--color-surface-dark);

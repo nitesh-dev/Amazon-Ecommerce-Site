@@ -66,11 +66,33 @@ function slideRight() {
     </section>
 
     <section class="light">
-        <div class="container">
+        <div class="container products">
             <h2 class="responsive-margin">Watches</h2>
             <div class="card-container responsive-margin">
-                <ProductCard v-for="item in 10" />
-               
+                <ProductCard v-for="item in 7" />
+                <div class="show-more">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M13.267 4.209a.75.75 0 0 0-1.034 1.086l6.251 5.955H3.75a.75.75 0 0 0 0 1.5h14.734l-6.251 5.954a.75.75 0 0 0 1.034 1.087l7.42-7.067a.996.996 0 0 0 .3-.58.758.758 0 0 0-.001-.29.995.995 0 0 0-.3-.578l-7.419-7.067Z" />
+                    </svg>
+                    <span>View All</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="light">
+        <div class="container products">
+            <h2 class="responsive-margin">Watches</h2>
+            <div class="card-container responsive-margin">
+                <ProductCard v-for="item in 7" />
+                <div class="show-more">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M13.267 4.209a.75.75 0 0 0-1.034 1.086l6.251 5.955H3.75a.75.75 0 0 0 0 1.5h14.734l-6.251 5.954a.75.75 0 0 0 1.034 1.087l7.42-7.067a.996.996 0 0 0 .3-.58.758.758 0 0 0-.001-.29.995.995 0 0 0-.3-.578l-7.419-7.067Z" />
+                    </svg>
+                    <span>View All</span>
+                </div>
             </div>
         </div>
     </section>
@@ -86,14 +108,33 @@ function slideRight() {
     margin-bottom: 2rem;
 }
 
+.show-more{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-surface);
+    border-radius: var(--radius-medium);
+    border: 1px solid var(--color-surface-dark);
+    font-size: var(--medium-font);
+    color: var(--color-primary);
+}
+
+.show-more svg{
+    fill: var(--color-primary);
+}
+
+
+.products {
+    padding: 2rem 0;
+}
+
 
 
 .responsive-margin {
     margin-left: 1rem;
     margin-right: 1rem;
 }
-
-
 
 
 
