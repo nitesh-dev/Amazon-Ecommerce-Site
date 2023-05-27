@@ -130,6 +130,16 @@ app.get('/category/:id', async (req, res) => {
 
 })
 
+app.get('/product', async (req, res) => {
+    let productId = stringToNumber(req.query.productId as string);
+    const data = await mongoAPI.getProduct(productId)
+    if (data == null) {
+        res.status(404).send("Not Found")
+    } else {
+        res.status(200).send(data)
+    }
+})
+
 app.get('/all-category', async (req, res) => {
 
     const data = await mongoAPI.getAllCategory()

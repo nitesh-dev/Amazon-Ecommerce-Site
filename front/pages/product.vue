@@ -1,63 +1,148 @@
 <script setup lang='ts'>
+import Api from './api/api';
+import { ProductData, SimpleScrapData } from './api/apiDataType';
+import { stringToNumber, unixMillisecondsToDateString } from './api/utils';
+
+const productData = ref<ProductData>()
+const productMoreDetail = ref<SimpleScrapData>()
+
+
+const isLoaded = ref(false)
+onMounted(function () {
+    // temp
+    loadData()
+})
+
+
+function urlToFeaturesUrl(url: string) {
+    //.__CR0,0,1464,600_PT0_SX1464_V1___.
+    const lastIndex = url.lastIndexOf('.')
+    const left = url.slice(0, lastIndex)
+    const right = url.slice(lastIndex + 1, url.length)
+    const modifiedUrl = left + ".__CR0,0,1464,600_PT0_SX1464_V1___." + right
+    console.log(modifiedUrl)
+    return modifiedUrl
+}
+
+function urlToThumbnailUrl(url: string) {
+    //._SS100_.
+    const lastIndex = url.lastIndexOf('.')
+    const left = url.slice(0, lastIndex)
+    const right = url.slice(lastIndex + 1, url.length)
+    const modifiedUrl = left + "._SS100_." + right
+    console.log(modifiedUrl)
+    return modifiedUrl
+}
+
+
+function urlToLandingUrl(url: string) {
+    //._SX522_.
+    const lastIndex = url.lastIndexOf('.')
+    const left = url.slice(0, lastIndex)
+    const right = url.slice(lastIndex + 1, url.length)
+    const modifiedUrl = left + "._SX522_." + right
+    console.log(modifiedUrl)
+    return modifiedUrl
+}
+
+
+async function loadData() {
+    isLoaded.value = false
+    const res = await Api.getProduct(getProductId())
+    if (res.isError) {
+        alert(res.error)
+    } else {
+        if (res.result == null) {
+            alert("Something went wrong")
+        } else {
+            productData.value = res.result
+            productMoreDetail.value = JSON.parse(res.result.allDetail) as SimpleScrapData
+            isLoaded.value = true
+        }
+    }
+}
+
+function getProductId() {
+
+    const currentUrl = window.location.href;
+    const url = new URL(currentUrl);
+    const id = `${url.searchParams.get("productId")}`
+    return stringToNumber(id)
+}
+
+
+const openedLandingImage = ref(0)
+function showLandingImage(index: number) {
+    openedLandingImage.value = index
+}
+
+
+function getStarImage(max: number) {
+    const rating = productData.value?.rating
+
+    if(rating == undefined) return "/icons/empty_star.svg"
+
+    if (rating < max && rating > (max - 10)) {
+        return '/icons/half_star.svg';
+    }else if(rating >= max){
+        return '/icons/full_star.svg';
+    }else{
+        return '/icons/empty_star.svg';
+    }
+}
+
+
 
 </script>
 <template>
-    <div class="container">
+    <div class="loader-holder" v-if="!isLoaded">
+        <div class="loader"></div>
+    </div>
+    <div v-if="isLoaded" class="container">
         <section class="product-container">
             <div class="image-container">
                 <div class="image-holder">
-                    <img src="/images/image_1.jpg">
+
+                    <template v-for="url, index in productMoreDetail?.landingImages" :key="index">
+                        <img :src="urlToLandingUrl(url)" v-if="openedLandingImage == index">
+                    </template>
                 </div>
 
                 <div class="thumbnail-container">
                     <div>
-                        <img src="/images/image_1.jpg">
-                        <img src="/images/image_1.jpg">
-                        <img src="/images/image_1.jpg">
-                        <img src="/images/image_1.jpg">
-                        <img src="/images/image_1.jpg">
-                        <img src="/images/image_1.jpg">
+                        <img :src="urlToThumbnailUrl(url)" v-for="url, index in productMoreDetail?.landingImages"
+                            :key="index" @click="showLandingImage(index)" :class="{ active: openedLandingImage == index }">
                     </div>
                 </div>
 
             </div>
             <div class="detail-container">
-                <h3>Samsung Galaxy M14 5G (Berry Blue,6GB,128GB Storage)</h3>
+                <h3>{{ productData?.name }}</h3>
 
                 <div class="rating">
-                    <img src="/icons/full_star.svg">
-                    <img src="/icons/full_star.svg">
-                    <img src="/icons/full_star.svg">
-                    <img src="/icons/half_star.svg">
-                    <img src="/icons/empty_star.svg">
-                    <span>(120)</span>
+                    <img :src="getStarImage(10)">
+                    <img :src="getStarImage(20)">
+                    <img :src="getStarImage(30)">
+                    <img :src="getStarImage(40)">
+                    <img :src="getStarImage(50)">
+
+                    <span>({{ productData?.reviewCount.toLocaleString() }})</span>
                 </div>
 
                 <hr>
                 <div class="pricing">
-                    <span>₹10,999</span>
-                    <span>₹12,999</span>
+                    <span>₹{{ productData?.discountPrice.toLocaleString() }}</span>
+                    <span>₹{{ productData?.price.toLocaleString() }}</span>
 
                 </div>
-                <button>Buy from Amazon</button>
+                <a :href="productData?.affiliateUrl">Buy from Amazon</a>
+
                 <hr>
                 <table>
                     <tbody>
-                        <tr>
-                            <td>Color</td>
-                            <td>Army Green</td>
-                        </tr>
-                        <tr>
-                            <td>Brand</td>
-                            <td>Sony</td>
-                        </tr>
-                        <tr>
-                            <td>Product Care</td>
-                            <td>Do Not Machine Wash, Do Not Use Dryer, Hand Wash OnlyProduct</td>
-                        </tr>
-                        <tr>
-                            <td>Dimensions</td>
-                            <td>180L x 61W x 0.6Th Centimeters</td>
+                        <tr v-for="info in productMoreDetail?.smallInfo">
+                            <td>{{ info.heading }}</td>
+                            <td>{{ info.content }}</td>
                         </tr>
 
                     </tbody>
@@ -66,54 +151,30 @@
             </div>
 
         </section>
-        <section class="about-container">
+        
+        <section v-if="productMoreDetail?.aboutItem.length != 0" class="about-container">
             <h2>About this item</h2>
             <ul>
-                <li>Eco-friendly material: Excellent-quality, eco-friendly, 100% non-toxic material that will prevent sweat and dirt from absorbing into the mat</li>
-                <li>Ergonomic design: Functional design with 6mm thick for a perfect yoga asana or workout drill</li>
-                <li>Anti-slip technology: The anti-slip technology ensures perfect grip & stability</li>
-                <li>Easy to clean: the moisture-resistant technology and good quality make the mat to be easily washed with soap and water</li>
-                <li>Carry Bag : The durable and lightweight carry bag comes with a stretch closure for easy and safe travels.</li>
+                <li v-for="info in productMoreDetail?.aboutItem">{{ info }}</li>
+
             </ul>
         </section>
 
-        <section class="more-detail">
+        <section v-if="productMoreDetail?.technicalDetails.length != 0" class="more-detail">
             <h2>Technical details</h2>
             <table>
                 <tbody>
-                    <tr>
-                        <td>OS</td>
-                        <td>Android</td>
-                    </tr>
-                    <tr>
-                        <td>Product Dimensions</td>
-                        <td>16.6 x 7.6 x 0.8 cm; 190 Grams</td>
-                    </tr>
-                    <tr>
-                        <td>OS</td>
-                        <td>Android</td>
-                    </tr>
-                    <tr>
-                        <td>OS</td>
-                        <td>Android</td>
-                    </tr>
-                    <tr>
-                        <td>OS</td>
-                        <td>Android</td>
-                    </tr>
-                    <tr>
-                        <td>OS</td>
-                        <td>Android</td>
+                    <tr v-for="detail in productMoreDetail?.technicalDetails">
+                        <td>{{ detail.heading }}</td>
+                        <td>{{ detail.content }}</td>
                     </tr>
                 </tbody>
             </table>
         </section>
 
-        <section class="images-list">
+        <section v-if="productMoreDetail?.featureImages.length != 0" class="images-list">
             <h2>From the Manufacturer</h2>
-            <img src="/images/image_1.jpg">
-            <img src="/images/image_2.jpg">
-            <img src="/images/image_3.jpg">
+            <img v-for="url in productMoreDetail?.featureImages" :src="urlToFeaturesUrl(url)">
         </section>
     </div>
 </template>
@@ -156,11 +217,26 @@
     display: flex;
     flex-direction: row;
     gap: 8px;
+    overflow-x: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
+.product-container .thumbnail-container div::-webkit-scrollbar {
+    display: none;
+}
+
+
 .product-container .thumbnail-container img {
+    border: 1px solid var(--color-surface-dark);
+    padding: 4px;
     width: 80px;
     height: 80px;
+    scale: 0.8;
+}
+
+.product-container .thumbnail-container img.active {
+    scale: 1 !important;
 }
 
 
@@ -171,7 +247,7 @@
 
 .product-container h3 {
     font-weight: 600;
-    font-size: var(--big-font);
+    font-size: var(--medium2-font);
     margin: 0.8rem 0;
 }
 
@@ -215,9 +291,11 @@
     text-decoration: line-through;
 }
 
-.product-container button {
+.product-container a {
+    display: inline-block;
     border: none;
     outline: none;
+    text-decoration: none;
     padding: 0.6rem 1rem;
     font-size: var(--medium-font);
     background-color: var(--color-primary);
@@ -228,7 +306,7 @@
 
 }
 
-.product-container button:hover {
+.product-container a:hover {
     background-color: var(--color-primary-variant);
 }
 
@@ -237,17 +315,24 @@
     font-size: inherit;
 }
 
-.product-container table td{
-    line-height: 1.5;
+.product-container table tr {
+    margin: 0.5em 0;
+    display: block;
 }
-.product-container table td:first-child{
+
+.product-container table td {
+    line-height: 1.5;
+    font-size: var(--medium-font);
+}
+
+.product-container table td:first-child {
     font-weight: 600;
     width: 200px;
     overflow: auto;
 }
 
 
-.about-container{
+.about-container {
     margin-top: 8px;
     background-color: var(--color-surface-variant);
     padding: 24px;
@@ -257,23 +342,23 @@
     color: var(--color-on-secondary);
 }
 
-.about-container h2{
+.about-container h2 {
     font-weight: 600;
     font-size: var(--big-font);
 }
 
-.about-container ul{
+.about-container ul {
     padding-left: 24px;
 }
 
-.about-container li{
+.about-container li {
     margin-bottom: 16px;
     line-height: 1.5;
     font-size: var(--medium-font);
 }
 
 
-.more-detail{
+.more-detail {
     background-color: var(--color-surface-variant);
     padding: 24px;
     margin-top: 8px;
@@ -283,53 +368,52 @@
     color: var(--color-on-secondary);
 }
 
-.more-detail h2{
+.more-detail h2 {
     font-size: var(--big-font);
     font-weight: 600;
 
 }
 
-.more-detail table{
+.more-detail table {
     width: 100%;
     border-collapse: collapse;
 }
 
 
-.more-detail tr:nth-child(odd){
+.more-detail tr:nth-child(odd) {
     background-color: var(--color-surface);
 }
 
 
-.more-detail td{
+.more-detail td {
     padding: 0.7rem;
     line-height: 1.5;
     font-size: var(--medium-font);
-    
+
 }
 
-.more-detail td:first-child{
+.more-detail td:first-child {
     font-weight: 600;
 }
 
 
-.images-list{
+.images-list {
     background-color: var(--color-surface-variant);
     padding: 24px;
     margin-top: 8px;
 }
 
-.images-list h2{
+.images-list h2 {
     color: var(--color-on-secondary);
     font-size: var(--big-font);
     font-weight: 600;
 }
 
-.images-list img{
+.images-list img {
     width: 100%;
     height: auto;
-    border-radius: var(--radius-medium);
-    margin-bottom: 0.5rem;
+    margin: 0;
+    display: block;
+
 }
-
-
 </style>
