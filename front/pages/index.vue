@@ -41,16 +41,122 @@ function slideRight() {
                 <div></div>
             </div>
         </div>
+        <!-- This is my code -->
+        <section class="light">
+            <div class="container category">
+                <!-- Write from here -->
+                <div>
+                    <h1>Popular Categories</h1>
+                    <hr>
+                    <div class="category-div">
+                        <div>
+                            <div class="image-container"><img src="../public/images/image_3.jpg" alt="ddf"></div>
+                            <div>
+                                <p>Item 1</p>
+                                <p>120 items</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div><img src="../public/images/image_3.jpg" alt="ddf"></div>
+                            <div>
+                                <p>Item 1</p>
+                                <p>120 items</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div><img src="../public/images/image_3.jpg" alt="ddf"></div>
+                            <div>
+                                <p>Item 1</p>
+                                <p>120 items</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div><img src="../public/images/image_3.jpg" alt="ddf"></div>
+                            <div>
+                                <p>Item 1</p>
+                                <p>120 items</p>
+                            </div>
+                        </div>
 
 
-        <!-- Write from here -->
-        <div>
+                        <p>Hello World</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Till Here -->
 
-            <p>Hello World</p>
-        </div>
+
+
+
+
     </div>
 </template>
 <style scoped>
+
+
+/*This is the CSS Code */
+
+
+.light {
+    background-color: var(--color-surface-variant);
+    overflow: auto;
+}
+
+.category {
+    padding: 4rem 0px;
+}
+
+.category hr{
+    border: none;
+    border-top: 2px solid var(--color-surface);
+    margin: 3rem 0;
+}
+
+
+.category-div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.category-div .image-container {
+    display: flex;
+    align-items: center;
+}
+
+.category-div div div p:first-child {
+    font-weight: 600;
+    font-size: var(--medium2-font);
+}
+
+.category-div img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--radius-medium);
+
+}
+
+.category-div>div {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background-color: var(--color-surface);
+    padding: 8px;
+    border-radius: var(--radius-medium);
+}
+
+.category-div p {
+    margin: 0;
+}
+
+/* End of the CSS  */
+
+
+
+
+
 .slideshow {
     margin-top: 50px;
     overflow-x: hidden;
