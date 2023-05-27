@@ -3,7 +3,8 @@
 // runDatabase()
 
 import Api from '../api/api'
-import { ScrapData } from '../api/apiDataType';
+import { ProductData, ScrapData } from '../api/apiDataType';
+import { stringToNumber, unixMillisecondsToDateString } from '../api/utils';
 
 const productUrl = ref("")
 const affiliateUrl = ref("")
@@ -11,7 +12,9 @@ const scrapData = ref(new ScrapData())
 const isLoaded = ref(false)
 const isSubmitting = ref(false)
 
-var adminId = null
+const allProducts = ref<ProductData[]>()
+
+var adminId: string | null = null
 onMounted(function () {
     // temp
     localStorage.setItem("adminId", "abc12345")
@@ -44,7 +47,20 @@ const status = ref<Status>(Status.Ideal)
 
 
 async function loadData() {
-    
+    isLoaded.value = false
+    status.value = Status.Ideal
+    const res = await Api.getCategoryProducts(getCategoryId(), 0)
+    if (res.isError) {
+        alert(res.error)
+    } else {
+        if (res.result == null) {
+            alert("Something went wrong")
+        } else {
+            allProducts.value = res.result
+            isLoaded.value = true
+        }
+    }
+
 }
 
 
@@ -53,14 +69,18 @@ function getCategoryId() {
 
     const currentUrl = window.location.href;
     const url = new URL(currentUrl);
-    return url.searchParams.get("categoryId");
+    const id = `${url.searchParams.get("categoryId")}`
+    return stringToNumber(id)
 }
 
 async function startScrapping() {
 
+    if (status.value != Status.Ideal) return
+
     status.value = Status.Scrap
     const res = await Api.getScrapData(productUrl.value)
     if (res.isError) {
+        status.value = Status.Ideal
         alert("Unable to scrap | " + res.error)
     } else {
         if (res.result != null) {
@@ -69,9 +89,9 @@ async function startScrapping() {
             await nextTick()
             adjustAllTextareaHeight()
         } else {
-            alert("Scrap empty data")
+            status.value = Status.Ideal
+            alert("Unable to scrap")
         }
-
     }
 
 }
@@ -79,17 +99,23 @@ async function startScrapping() {
 async function submitProduct() {
 
     if (isSubmitting.value) return
+    if (adminId == null) return
+
     const categoryId = getCategoryId()
-
-    if (categoryId == null) {
-        alert("Category Not found")
-        return
-    }
-
     isSubmitting.value = true
-    //const res = await Api.addProduct()
-
-
+    const res = await Api.addProduct(adminId, categoryId, affiliateUrl.value, scrapData.value)
+    isSubmitting.value = false
+    if (res.isError) {
+        alert(res.error)
+    } else {
+        if (res.result == null) {
+            alert("Something went wrong")
+        } else {
+            productUrl.value = ""
+            affiliateUrl.value = ""
+            loadData()
+        }
+    }
 }
 
 
@@ -147,21 +173,21 @@ function adjustTextareaHeight(target: EventTarget | null) {
             <div class="parent">
                 <div class="scrap-data">
                     <p>Rating</p>
-                    <input type="text" v-model="scrapData.info.rating">
+                    <input type="number" v-model="scrapData.info.rating">
                 </div>
                 <div class="scrap-data">
                     <p>Reviews</p>
-                    <input type="text" v-model="scrapData.info.reviewCount">
+                    <input type="number" v-model="scrapData.info.reviewCount">
                 </div>
             </div>
             <div class="parent">
                 <div class="scrap-data">
                     <p>Discount Price</p>
-                    <input type="text" v-model="scrapData.info.currentPrice">
+                    <input type="number" v-model="scrapData.info.discountPrice">
                 </div>
                 <div class="scrap-data">
                     <p>Real Price</p>
-                    <input type="text" v-model="scrapData.info.discountPrice">
+                    <input type="number" v-model="scrapData.info.price">
                 </div>
             </div>
 
@@ -384,12 +410,12 @@ function adjustTextareaHeight(target: EventTarget | null) {
                     </thead>
                     <tbody>
 
-                        <tr>
-                            <td>1</td>
-                            <td>Nitesh</td>
-                            <td>10</td>
-                            <td>19</td>
-                            <td>12 dec 2022</td>
+                        <tr v-for="product, index in allProducts">
+                            <td>{{ index }}</td>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.clicks }}</td>
+                            <td>{{ product.views }}</td>
+                            <td>{{ unixMillisecondsToDateString(product.createAt) }}</td>
                             <td>
                                 <button>
                                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
@@ -538,6 +564,4 @@ function adjustTextareaHeight(target: EventTarget | null) {
 .add-product button svg {
     fill: var(--color-on-primary);
 }
-
-
 </style>

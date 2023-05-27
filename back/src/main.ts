@@ -3,7 +3,7 @@ import { generateId, stringToNumber } from './utils.js'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import MongoAPI from './mongo.js'
-import { CategoryData, ProductData } from './models.js'
+import { CategoryData, ProductData, ScrapData } from './models.js'
 import startScrapping from './scraper.js'
 import bodyParser from 'body-parser'
 
@@ -28,18 +28,18 @@ app.use((req, res, next) => {
 
 
 
-app.post('/admin/*',async (req, res, next) => {
+app.post('/admin/*', async (req, res, next) => {
     if (!isMongoConnected) {
         res.status(400).send("Database connection error")
     } else {
         try {
             let adminId = req.body.adminId
-            if(await isAdmin(adminId)){
+            if (await isAdmin(adminId)) {
                 next()
-            }else{
+            } else {
                 res.status(403).send("You don't have access")
             }
-    
+
         } catch (error) {
             res.status(400).send(error)
         }
@@ -154,8 +154,11 @@ app.post('/admin/category', async (req, res) => {
     }
 
     const result = await mongoAPI.addCategory(data)
-    res.status(200).send(result)
-    
+    if(result == null){
+        res.status(400).send("Bad request")
+    }else{
+        res.status(200).send(result)
+    }
 })
 
 
@@ -175,29 +178,41 @@ async function isAdmin(adminId: number) {
 
 app.post('/admin/product', async (req, res) => {
 
-    let categoryId = req.body.categoryId
-    let data = req.body.data
-    const id = generateId()
+    try {
+        let categoryId = stringToNumber(`${req.body.categoryId}`)
+        let affiliateUrl = req.body.affiliateUrl as string
+        let data = new ScrapData().toObject(req.body.data as ScrapData)
+        const id = generateId()
 
-    const product: ProductData = {
-        categoryId: categoryId,
-        name: "",
-        rating: 4,
-        reviewCount: 112,
-        price: 0,
-        discountPrice: 0,
-        affiliateUrl: 'd',
-        allDetail: 'd',
-        productId: 0,
-        clicks: 0,
-        views: 0,
-        createAt: 0
-    };
+        const product: ProductData = {
+            categoryId: categoryId,
+            name: data.info.title,
+            rating: data.info.rating,
+            reviewCount: data.info.reviewCount,
+            price: data.info.price,
+            discountPrice: data.info.discountPrice,
+            affiliateUrl: affiliateUrl,
+            allDetail: data.toSimpleData(),
+            productId: id,
+            clicks: 0,
+            views: 0,
+            createAt: id
+        };
 
-    // const result = await mongoAPI.addProduct(product)
-    console.log(data)
-    res.status(200).send(data)
-    
+        const result = await mongoAPI.addProduct(product)
+        if(result == null){
+            res.status(400).send("Bad request | category not found")
+        }else{
+            res.status(200).send(result)
+        }
+        
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).send("Bad request")
+    }
+
+
 })
 
 

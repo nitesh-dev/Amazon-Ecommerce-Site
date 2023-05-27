@@ -24,6 +24,17 @@ export class ScrapData {
   featureImages: string[] = []
   landingImages: string[] = []
 
+  toObject(data: ScrapData){
+    this.info = data.info
+    this.smallInfo = data.smallInfo
+    this.technicalDetails = data.technicalDetails
+    this.aboutItem = data.aboutItem
+    this.featureImages = data.featureImages
+    this.landingImages = data.landingImages
+
+    return this
+  }
+
   toSimpleData() {
     let data = new SimpleScrapData()
     data.smallInfo = this.smallInfo
@@ -67,8 +78,8 @@ const productSchema = new Schema({
   name: { type: String, required: true },
   rating: { type: Number, required: true },
   reviewCount: { type: Number, required: true },
-  currentPrice: { type: String, required: true },
-  discountPrice: { type: String, required: true },
+  price: { type: Number, required: true },
+  discountPrice: { type: Number, required: true },
   affiliateUrl: { type: String, required: true },
   allDetail: { type: String, required: true },
 

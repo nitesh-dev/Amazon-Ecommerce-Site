@@ -13,3 +13,12 @@ export function unixMillisecondsToDateString(unixMilliseconds: number) {
 
     return dateString;
 }
+
+
+export function stringToNumber(text: string) {
+    var t = text.replace(/\D/g, "")
+    if (t == "") {
+        t = "0"
+    }
+    return parseInt(t);
+}

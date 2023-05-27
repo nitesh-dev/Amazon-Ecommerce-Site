@@ -1,17 +1,36 @@
 
+export class SimpleScrapData {
+    smallInfo: { heading: string, content: string }[] = []
+    technicalDetails: { heading: string, content: string }[] = []
+    aboutItem: string[] = []
+    featureImages: string[] = []
+    landingImages: string[] = []
+}
+
 export class ScrapData {
     info = {
         title: "",
-        rating: "",
-        reviewCount: "",
-        currentPrice: "",
-        discountPrice: ""
+        rating: 0,
+        reviewCount: 0,
+        price: 0,
+        discountPrice: 0
     }
     smallInfo: { heading: string, content: string }[] = []
     technicalDetails: { heading: string, content: string }[] = []
     aboutItem: string[] = []
     featureImages: string[] = []
     landingImages: string[] = []
+
+    toSimpleData() {
+        let data = new SimpleScrapData()
+        data.smallInfo = this.smallInfo
+        data.technicalDetails = this.technicalDetails
+        data.aboutItem = this.aboutItem
+        data.featureImages = this.featureImages
+        data.landingImages = this.landingImages
+
+        return JSON.stringify(data)
+    }
 }
 
 
@@ -39,4 +58,4 @@ export interface ProductData {
     discountPrice: number,
     affiliateUrl: string,
     allDetail: string
-  }
+}

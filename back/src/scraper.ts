@@ -10,7 +10,7 @@ export default async function startScrapping(url: string) {
         let json = await scrapData(html.data as string)
         console.log("completed")
         return json
-    }else{
+    } else {
         return null
     }
 }
@@ -52,8 +52,8 @@ async function scrapData(htmlContent: string) {
     const rating = document.querySelector("#acrPopover a>span")?.textContent?.trim()
     const reviewCount = document.querySelector("#acrCustomerReviewText")?.textContent?.trim().split(" ")[0]
     const priceParent = document.querySelectorAll("#corePriceDisplay_desktop_feature_div>div")
-    const discountPrice = priceParent[0].querySelector(".a-offscreen")?.textContent?.trim()
-    const totalPrice = priceParent[1].querySelector(".a-offscreen")?.textContent?.trim()
+    const discountPrice = priceParent[0]?.querySelector(".a-offscreen")?.textContent?.trim()
+    const totalPrice = priceParent[1]?.querySelector(".a-offscreen")?.textContent?.trim()
 
     // product small info
     const smallInfoRows = document.querySelectorAll("#productOverview_feature_div table tr")
@@ -88,9 +88,12 @@ async function scrapData(htmlContent: string) {
     const featuredImages = document.querySelectorAll("#aplus img")
     const imagesData = Array<string>()
     featuredImages.forEach(img => {
-        const src = (img as HTMLImageElement).src
+        var src: string | null = (img as HTMLImageElement).src
         if (src.indexOf(".gif") == -1) {
-            imagesData.push(src)
+            src = filterUrl(src)
+            if (src != null) {
+                imagesData.push(src)
+            }
         }
     });
 
@@ -101,9 +104,13 @@ async function scrapData(htmlContent: string) {
     landingThumbnails.forEach(li => {
 
         if (li.classList.toString() == "a-spacing-small item") {
-            const src = li.querySelector("img")?.src
+            var src = li.querySelector("img")?.src
             if (src != undefined) {
-                landingImageData.push(src)
+
+                let filteredUrl = filterUrl(src)
+                if (filteredUrl != null) {
+                    landingImageData.push(filteredUrl)
+                }
             }
         }
 
@@ -127,6 +134,19 @@ async function scrapData(htmlContent: string) {
     jsonData.landingImages = landingImageData
 
     return JSON.stringify(jsonData)
+}
+
+
+function filterUrl(url: string) {
+    let lastDotIndex = url.lastIndexOf('.');  // Find the index of the last dot
+    let secondLastDotIndex = url.lastIndexOf('.', lastDotIndex - 1) - 1;  // Find the index of the second last dot
+
+    if (lastDotIndex !== -1 && secondLastDotIndex !== -1) {
+        let modifiedUrl = url.slice(0, secondLastDotIndex + 1) + url.slice(lastDotIndex);  // Remove the characters in between
+        return modifiedUrl
+    } else {
+        return null
+    }
 }
 
 

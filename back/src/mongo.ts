@@ -32,7 +32,7 @@ class MongoAPI {
 
         } catch (error) {
             console.error('Error saving product:', error);
-            throw error;
+            return null
         }
 
     }
@@ -53,7 +53,7 @@ class MongoAPI {
             return newCategory;
         } catch (error) {
             console.error('Error saving product:', error);
-            throw error;
+            return null
         }
     }
 
@@ -66,7 +66,7 @@ class MongoAPI {
 
         } catch (error) {
             console.error('Error saving product:', error);
-            throw error;
+            return null
         }
     }
 
@@ -77,7 +77,7 @@ class MongoAPI {
 
         } catch (error) {
             console.error('Error saving product:', error);
-            throw error;
+            return null
         }
     }
 
@@ -96,40 +96,42 @@ class MongoAPI {
     async addProduct(productData: ProductData) {
 
         try {
+            const isExist = await this.getCategory(productData.categoryId)
+            if (isExist == null) {
+                return null
+            }
+
             const newProduct = await Product.create(productData);
 
             await Category.findOneAndUpdate(
                 { categoryId: productData.categoryId },
-                { $inc: { clicks: 1, views: 1 } }
+                { $inc: { count: 1, views: 1 } }
             );
 
             console.log("product added")
             return newProduct;
         } catch (error) {
             console.error('Error saving product:', error);
-            throw error;
+            return null
         }
     }
 
     async getProduct(productId: number) {
         try {
-
             const product = await Product.findOne({ productId: productId });
             console.log("fetch product")
             return product;
 
         } catch (error) {
             console.error('Error saving product:', error);
-            throw error;
+            return null
         }
     }
 
     async getProducts(categoryId: number, limit: number) {
         try {
-
             const isExist = await this.getCategory(categoryId)
-
-            if(isExist == null){
+            if (isExist == null) {
                 return null
             }
 
@@ -148,7 +150,7 @@ class MongoAPI {
 
         } catch (error) {
             console.error('Error saving product:', error);
-            throw error;
+            return null
         }
     }
 

@@ -15,12 +15,12 @@ namespace Api {
     const apiURL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001'
 
     export async function getScrapData(url: string) {
-        return get<ScrapData>("scrap-url", `url=${url}`)
+        return getScrap<ScrapData>("scrap-url", `url=${url}`)
     }
 
 
-    export async function getCategoryProducts() {
-        return get<ProductData[]>("all-category", '')
+    export async function getCategoryProducts(categoryId: number, limit: number) {
+        return get<ProductData[]>("category-products", `categoryId=${categoryId}&limit=${limit}`)
     }
 
     export async function getAllCategory() {
@@ -39,10 +39,11 @@ namespace Api {
     }
 
 
-    export async function addProduct(adminId: string, categoryId: number, scrapData: ScrapData) {
+    export async function addProduct(adminId: string, categoryId: number, affiliateUrl: string, scrapData: ScrapData) {
         let productData = {
             adminId: adminId,
             categoryId: categoryId,
+            affiliateUrl: affiliateUrl,
             data: scrapData
 
         }
@@ -61,6 +62,28 @@ namespace Api {
 
 
 
+
+
+
+
+    async function getScrap<T>(path: string, query: string) {
+        const requestOptions: RequestInit = {
+            method: "GET",
+            redirect: "follow",
+        };
+
+        try {
+            const res = await fetch(`${apiURL}/${path}?${query}`, requestOptions);
+            if (res.ok) {
+                const data = JSON.parse(await res.json()) as T
+                return createResult<T>(data, false)
+            } else {
+                return createResult<T>(null, true, await res.text())
+            }
+        } catch (error) {
+            return createResult<T>(null, true, "fetch error")
+        }
+    }
 
 
 

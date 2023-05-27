@@ -33,7 +33,6 @@ function getAdminId() {
 async function loadData() {
     isLoaded.value = false
     const res = await Api.getAllCategory()
-    isLoaded.value = true
     if (res.isError) {
         alert(res.error)
     } else {
@@ -41,6 +40,7 @@ async function loadData() {
             alert("Something went wrong!")
         } else {
             categories.value = res.result
+            isLoaded.value = true
         }
     }
 }
