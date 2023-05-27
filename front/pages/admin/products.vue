@@ -76,9 +76,10 @@ function getCategoryId() {
 async function startScrapping() {
 
     if (status.value != Status.Ideal) return
+    if (adminId == null) return
 
     status.value = Status.Scrap
-    const res = await Api.getScrapData(productUrl.value)
+    const res = await Api.getScrapData(productUrl.value, adminId)
     if (res.isError) {
         status.value = Status.Ideal
         alert("Unable to scrap | " + res.error)
@@ -103,7 +104,13 @@ async function submitProduct() {
 
     const categoryId = getCategoryId()
     isSubmitting.value = true
-    const res = await Api.addProduct(adminId, categoryId, affiliateUrl.value, scrapData.value)
+    const thumbnailUrl = scrapData.value.landingImages[0]
+    if(thumbnailUrl == undefined){
+        alert("thumbnail missing with this product")
+        return
+    }
+
+    const res = await Api.addProduct(adminId, categoryId, thumbnailUrl, affiliateUrl.value, scrapData.value)
     isSubmitting.value = false
     if (res.isError) {
         alert(res.error)

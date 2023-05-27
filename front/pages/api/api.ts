@@ -14,8 +14,8 @@ namespace Api {
 
     const apiURL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001'
 
-    export async function getScrapData(url: string) {
-        return getScrap<ScrapData>("scrap-url", `url=${url}`)
+    export async function getScrapData(url: string, adminId: string) {
+        return getScrap<ScrapData>("admin/scrap-url", `url=${url}&adminId=${adminId}`)
     }
 
 
@@ -39,10 +39,11 @@ namespace Api {
     }
 
 
-    export async function addProduct(adminId: string, categoryId: number, affiliateUrl: string, scrapData: ScrapData) {
+    export async function addProduct(adminId: string, categoryId: number, imageUrl: string, affiliateUrl: string, scrapData: ScrapData) {
         let productData = {
             adminId: adminId,
             categoryId: categoryId,
+            imageUrl: imageUrl,
             affiliateUrl: affiliateUrl,
             data: scrapData
 
@@ -67,6 +68,8 @@ namespace Api {
 
 
     async function getScrap<T>(path: string, query: string) {
+
+
         const requestOptions: RequestInit = {
             method: "GET",
             redirect: "follow",

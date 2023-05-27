@@ -65,7 +65,8 @@ export interface ProductData {
   price: number,
   discountPrice: number,
   affiliateUrl: string,
-  allDetail: string
+  allDetail: string,
+  imageUrl: string
 }
 
 const productSchema = new Schema({
@@ -82,6 +83,7 @@ const productSchema = new Schema({
   discountPrice: { type: Number, required: true },
   affiliateUrl: { type: String, required: true },
   allDetail: { type: String, required: true },
+  imageUrl: { type: String, required: true },
 
 });
 

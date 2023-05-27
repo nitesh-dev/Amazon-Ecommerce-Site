@@ -46,6 +46,24 @@ app.post('/admin/*', async (req, res, next) => {
     }
 })
 
+app.get('/admin/scrap-url', async (req, res, next) => {
+    if (!isMongoConnected) {
+        res.status(400).send("Database connection error")
+    } else {
+        try {
+            let adminId = req.query.adminId as string
+            console.log("admin: " + adminId)
+            if (await isAdmin(adminId)) {
+                next()
+            } else {
+                res.status(403).send("You don't have access")
+            }
+
+        } catch (error) {
+            res.status(400).send(error)
+        }
+    }
+})
 
 
 
@@ -66,7 +84,7 @@ app.get('/', (req, res) => {
 
 // --------------------- Scrap -------------------
 
-app.get('/scrap-url', async (req, res) => {
+app.get('/admin/scrap-url', async (req, res) => {
 
     let url = req.query.url as string;
     const data = await startScrapping(url)
@@ -162,7 +180,7 @@ app.post('/admin/category', async (req, res) => {
 })
 
 
-async function isAdmin(adminId: number) {
+async function isAdmin(adminId: string) {
     let admin = await mongoAPI.getAdmin()
     if (admin == null) {
         return false
@@ -181,6 +199,7 @@ app.post('/admin/product', async (req, res) => {
     try {
         let categoryId = stringToNumber(`${req.body.categoryId}`)
         let affiliateUrl = req.body.affiliateUrl as string
+        let imageUrl = req.body.imageUrl as string
         let data = new ScrapData().toObject(req.body.data as ScrapData)
         const id = generateId()
 
@@ -196,7 +215,8 @@ app.post('/admin/product', async (req, res) => {
             productId: id,
             clicks: 0,
             views: 0,
-            createAt: id
+            createAt: id,
+            imageUrl: imageUrl
         };
 
         const result = await mongoAPI.addProduct(product)

@@ -57,5 +57,6 @@ export interface ProductData {
     price: number,
     discountPrice: number,
     affiliateUrl: string,
-    allDetail: string
+    allDetail: string,
+    imageUrl: string
 }
