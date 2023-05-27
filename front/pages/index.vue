@@ -10,7 +10,8 @@ function slideRight() {
 
 </script>
 <template>
-    <div class="container">
+    <Header></Header>
+    <section class="container">
         <div class="slideshow">
             <div class="image-container-holder">
                 <button class="left"><img src="/images/arrow.svg" alt=""></button>
@@ -41,83 +42,88 @@ function slideRight() {
                 <div></div>
             </div>
         </div>
-        <!-- This is my code -->
-        <section class="light">
-            <div class="container category">
-                <!-- Write from here -->
-                <div>
-                    <h1>Popular Categories</h1>
-                    <hr>
-                    <div class="category-div">
-                        <div>
-                            <div class="image-container"><img src="../public/images/image_3.jpg" alt="ddf"></div>
-                            <div>
-                                <p>Item 1</p>
-                                <p>120 items</p>
-                            </div>
-                        </div>
-                        <div>
-                            <div><img src="../public/images/image_3.jpg" alt="ddf"></div>
-                            <div>
-                                <p>Item 1</p>
-                                <p>120 items</p>
-                            </div>
-                        </div>
-                        <div>
-                            <div><img src="../public/images/image_3.jpg" alt="ddf"></div>
-                            <div>
-                                <p>Item 1</p>
-                                <p>120 items</p>
-                            </div>
-                        </div>
-                        <div>
-                            <div><img src="../public/images/image_3.jpg" alt="ddf"></div>
-                            <div>
-                                <p>Item 1</p>
-                                <p>120 items</p>
-                            </div>
-                        </div>
+    </section>
 
 
-                        <p>Hello World</p>
+
+    <!-- This is my code -->
+    <section class="light">
+        <div class="container category">
+            <div>
+                <h1 class="responsive-margin">Popular Categories</h1>
+                <hr>
+                <div class="category-div responsive-margin">
+                    <div v-for="item in 5">
+                        <div class="image-container"><img src="../public/images/image_3.jpg" alt="ddf"></div>
+                        <div>
+                            <p>Item 1</p>
+                            <p>120 items</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
-        <!-- Till Here -->
+        </div>
+    </section>
 
+    <section class="light">
+        <div class="container">
+            <h2 class="responsive-margin">Watches</h2>
+            <div class="card-container responsive-margin">
+                <ProductCard v-for="item in 10" />
+               
+            </div>
+        </div>
+    </section>
 
-
-
-
-    </div>
+    <Footer></Footer>
 </template>
 <style scoped>
+.card-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
 
 
-/*This is the CSS Code */
+
+.responsive-margin {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+
+
+
+
+
+
+
+
 
 
 .light {
+    margin-top: 1rem;
     background-color: var(--color-surface-variant);
     overflow: auto;
 }
 
 .category {
-    padding: 4rem 0px;
+    padding: 1rem 0;
 }
 
-.category hr{
+.category hr {
     border: none;
     border-top: 2px solid var(--color-surface);
-    margin: 3rem 0;
+    margin: 2rem 0;
 }
 
 
 .category-div {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
 }
 
 .category-div .image-container {
@@ -126,6 +132,7 @@ function slideRight() {
 }
 
 .category-div div div p:first-child {
+    color: var(--color-on-secondary);
     font-weight: 600;
     font-size: var(--medium2-font);
 }
@@ -143,6 +150,7 @@ function slideRight() {
     align-items: center;
     gap: 16px;
     background-color: var(--color-surface);
+    border: 1px solid var(--color-surface-dark);
     padding: 8px;
     border-radius: var(--radius-medium);
 }
@@ -160,6 +168,7 @@ function slideRight() {
 .slideshow {
     margin-top: 50px;
     overflow-x: hidden;
+    margin-bottom: 2rem;
 }
 
 .slideshow .image-container-holder {
@@ -222,5 +231,39 @@ function slideRight() {
 .marker-container .active {
     width: 30px;
     background-color: var(--color-primary);
+}
+
+
+
+
+
+@media only screen and (max-width: 1000px) {
+    .card-container {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .category-div {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .slideshow {
+        margin: 2rem 1rem;
+    }
+
+    .card-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .category-div {
+        grid-template-columns: 1fr;
+    }
+
+    .card-container {
+        gap: 0.5rem;
+    }
 }
 </style>
