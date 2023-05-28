@@ -175,8 +175,21 @@ app.get('/home', async (req, res) => {
 
 app.post('/admin/category', async (req, res) => {
 
-    let categoryName = req.body.name
-    let imageUrl = req.body.url
+    let categoryName = req.body.name as string
+    let isSlide = req.body.isSlide as boolean
+    let imageUrl = req.body.url as string
+
+    if(isSlide == true){
+        let isExist = await mongoAPI.isSlideShowCategoryExist()
+        if(isExist == null){
+            res.status(400).send("Something went wrong")
+            return
+        }else if(isExist){
+            res.status(400).send("Category already exist")
+            return
+        }
+    }
+
     const id = generateId()
     let data: CategoryData = {
         categoryId: id,
@@ -186,7 +199,7 @@ app.post('/admin/category', async (req, res) => {
         name: categoryName,
         imageUrl: imageUrl,
         count: 0,
-        isSlide: false
+        isSlide: isSlide
     }
 
     const result = await mongoAPI.addCategory(data)

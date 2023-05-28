@@ -7,6 +7,7 @@ import { unixMillisecondsToDateString } from '../api/utils.js';
 const isLoaded = ref(false)
 const isSubmitting = ref(false)
 const categoryName = ref("")
+const imageUrl = ref("")
 var adminId: string | null = null
 
 const categories = ref<CategoryData[]>()
@@ -41,11 +42,15 @@ async function loadData() {
         } else {
             categories.value = res.result
             isLoaded.value = true
+            if(res.result.length == 0){
+                categoryName.value = "SlideShow"
+                createCategory(true)
+            }
         }
     }
 }
 
-async function createCategory() {
+async function createCategory(isSlideshow = false) {
 
     if (adminId == null) return
     if (isSubmitting.value) return
@@ -53,19 +58,21 @@ async function createCategory() {
     if (name.length == 0) return
 
     isSubmitting.value = true
-    const res = await Api.addCategory(adminId, name, "http//")
+    const res = await Api.addCategory(adminId, name, isSlideshow, imageUrl.value)
     isSubmitting.value = false
 
     if (res.isError) {
         alert(res.error)
     } else {
+        categoryName.value = ''
+        imageUrl.value = ''
         loadData()
     }
 
 }
 
-function openCategory(id: number){
-    window.location.href = `/admin/products?categoryId=${id}`
+function openCategory(id: number, slideshow: boolean){
+    window.location.href = `/admin/products?categoryId=${id}&slideShow=${slideshow}`
 }
 
 
@@ -79,9 +86,10 @@ function openCategory(id: number){
 
     <section v-if="isLoaded" class="container panel">
         <h2>Add category</h2>
-        <div class="add-collection">
-            <input type="text" placeholder="Collection name" v-model="categoryName">
-            <button @click="createCategory">
+        <form class="add-collection" method="post" @submit.prevent="createCategory()">
+            <input type="text" placeholder="Collection name" v-model="categoryName" required>
+            <input type="url" placeholder="Image Url" v-model="imageUrl" required>
+            <button type="submit">
                 <div v-if="isSubmitting" class="loader2"></div>
                 <svg v-if="!isSubmitting" width="24" height="24" fill="none" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
@@ -89,7 +97,7 @@ function openCategory(id: number){
                         d="M11.883 3.007 12 3a1 1 0 0 1 .993.883L13 4v7h7a1 1 0 0 1 .993.883L21 12a1 1 0 0 1-.883.993L20 13h-7v7a1 1 0 0 1-.883.993L12 21a1 1 0 0 1-.993-.883L11 20v-7H4a1 1 0 0 1-.993-.883L3 12a1 1 0 0 1 .883-.993L4 11h7V4a1 1 0 0 1 .883-.993L12 3l-.117.007Z" />
                 </svg>
             </button>
-        </div>
+        </form>
 
     </section>
 
@@ -98,6 +106,7 @@ function openCategory(id: number){
             <table>
                 <colgroup>
                     <col style="width: 4rem;">
+                    <col style="width: auto;">
                     <col style="width: auto;">
                     <col style="width: auto;">
                     <col style="width: auto;">
@@ -114,7 +123,8 @@ function openCategory(id: number){
                         <th>Visits</th>
                         <th>Views</th>
                         <th>Date</th>
-                        <th>Detail</th>
+                        <th>SlideShow</th>
+                        <th>View</th>
                         <th>Delete</th>
                     </tr>
                 </thead>
@@ -126,8 +136,9 @@ function openCategory(id: number){
                         <td>{{ category.clicks }}</td>
                         <td>{{ category.views }}</td>
                         <td>{{ unixMillisecondsToDateString(category.createAt) }}</td>
+                        <td>{{ category.isSlide }}</td>
                         <td>
-                            <button @click="openCategory(category.categoryId)">
+                            <button @click="openCategory(category.categoryId, category.isSlide)">
                                 <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path

@@ -42,11 +42,12 @@ export interface CategoryData {
     createAt: number,
     name: string,
     imageUrl: string,
-    count: number
-}
+    count: number,
+    isSlide: boolean
+  }
 
 
-export interface ProductData {
+  export interface ProductData {
     categoryId: number,
     productId: number,
     clicks: number,
@@ -59,5 +60,34 @@ export interface ProductData {
     discountPrice: number,
     affiliateUrl: string,
     allDetail: string,
-    imageUrl: string
-}
+    imageUrl: string,
+    scrapUrl: string,
+    slideImageUrl: string
+  }
+
+
+  export interface SimpleProductData{
+    categoryId: number,
+    productId: number,
+    views: number,
+    name: string,
+    rating: number,
+    reviewCount: number,
+    price: number,
+    discountPrice: number,
+    imageUrl: string,
+    slideImageUrl: string
+  }
+  
+  export interface SimpleCategoryData {
+    categoryId: number,
+    name: string,
+    imageUrl: string,
+    count: number,
+    isSlide: boolean
+  }
+  export interface HomeData{
+    category: SimpleCategoryData, 
+    products: SimpleProductData[]
+  }
+  

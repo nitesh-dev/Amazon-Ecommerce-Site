@@ -57,6 +57,19 @@ class MongoAPI {
         }
     }
 
+    async isSlideShowCategoryExist() {
+        try {
+            const category = await Category.findOne({ name: 'SlideShow' }).lean()
+            if(category == null){
+                return false
+            }
+            return true
+
+        } catch (error) {
+            console.error('Error', error);
+            return null
+        }
+    }
 
     async getCategory(categoryId: number) {
         try {

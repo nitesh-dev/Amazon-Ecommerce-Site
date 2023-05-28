@@ -33,10 +33,11 @@ namespace Api {
     }
 
 
-    export async function addCategory(adminId: string, categoryName: string, imageUrl: string) {
+    export async function addCategory(adminId: string, categoryName: string, isSlide: boolean, imageUrl: string) {
         let categoryData = {
             adminId: adminId,
             name: categoryName,
+            isSlide: isSlide,
             url: imageUrl
 
         }

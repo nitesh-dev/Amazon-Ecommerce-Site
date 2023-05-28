@@ -77,8 +77,6 @@ export interface HomeData{
 
 
 
-// -------------- Account ----------------
-
 
 // ------------ Products -----------------
 export interface ProductData {
@@ -145,7 +143,7 @@ const categorySchema = new Schema({
   views: { type: Number, required: true },
   createAt: { type: Number, required: true },
   name: { type: String, required: true },
-  imageUrl: { type: String, required: true },
+  imageUrl: { type: String},
   count: { type: Number, required: true },
   isSlide: { type: Boolean, required: true },
 

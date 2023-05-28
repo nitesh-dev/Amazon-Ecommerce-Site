@@ -15,9 +15,18 @@ const isSubmitting = ref(false)
 const allProducts = ref<ProductData[]>()
 
 var adminId: string | null = null
+
+var isSlideshow = false
 onMounted(function () {
     // temp
     localStorage.setItem("adminId", "abc12345")
+
+    let mode = openedMode()
+    if(mode == null){
+        history.back()
+    }else{
+        isSlideshow = mode
+    }
 
     adminId = getAdminId()
     if (adminId == null) {
@@ -64,6 +73,18 @@ async function loadData() {
 }
 
 
+function openedMode(){
+    const currentUrl = window.location.href;
+    const url = new URL(currentUrl);
+    const type = `${url.searchParams.get("slideShow")}`
+    if(type == 'true'){
+        return true
+    }else if(type == 'false'){
+        return false
+    }
+
+    return null
+}
 
 function getCategoryId() {
 
