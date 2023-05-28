@@ -1,4 +1,4 @@
-import { CategoryData, ProductData, ScrapData } from "./apiDataType"
+import { CategoryData, HomeData, ProductData, ScrapData, SimpleProductData } from "./apiDataType"
 
 interface Result<T> {
     type(account_id: string, type: any): unknown
@@ -23,6 +23,14 @@ namespace Api {
         return get<ProductData>("product", `productId=${productId}`)
     }
 
+    export async function getHomeData() {
+        return get<HomeData[]>("home", '')
+    }
+
+
+    export async function getCategoryAllProducts(categoryId: number) {
+        return get<SimpleProductData[]>("category-all-products", `categoryId=${categoryId}`)
+    }
 
     export async function getCategoryProducts(categoryId: number, limit: number) {
         return get<ProductData[]>("category-products", `categoryId=${categoryId}&limit=${limit}`)
@@ -45,22 +53,18 @@ namespace Api {
     }
 
 
-    export async function addProduct(adminId: string, categoryId: number, imageUrl: string, affiliateUrl: string, scrapData: ScrapData) {
+    export async function addProduct(adminId: string, categoryId: number, imageUrl: string, affiliateUrl: string, slideImageUrl: string, scrapData: ScrapData) {
         let productData = {
             adminId: adminId,
             categoryId: categoryId,
             imageUrl: imageUrl,
             affiliateUrl: affiliateUrl,
+            slideImageUrl: slideImageUrl,
             data: scrapData
 
         }
         return post("admin/product", "", productData)
     }
-
-    // export async function getAllProducts(categoryId: number)
-
-
-
 
 
 

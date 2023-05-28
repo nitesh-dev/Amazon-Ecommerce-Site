@@ -114,6 +114,18 @@ app.get('/category-products', async (req, res) => {
 })
 
 
+app.get('/category-all-products', async (req, res) => {
+
+    let categoryId = stringToNumber(req.query.categoryId as string);
+    const data = await mongoAPI.getSimpleProducts(categoryId, 0)
+    if (data == null) {
+        res.status(404).send("Not Found")
+    } else {
+        res.status(200).send(data)
+    }
+})
+
+
 
 
 
@@ -229,6 +241,7 @@ app.post('/admin/product', async (req, res) => {
 
     try {
         let categoryId = stringToNumber(`${req.body.categoryId}`)
+        let slideImageUrl = req.body.slideImageUrl as string
         let affiliateUrl = req.body.affiliateUrl as string
         let imageUrl = req.body.imageUrl as string
         let data = new ScrapData().toObject(req.body.data as ScrapData)
@@ -251,7 +264,7 @@ app.post('/admin/product', async (req, res) => {
             createAt: id,
             imageUrl: imageUrl,
             scrapUrl: data.scrapUrl,
-            slideImageUrl: ''
+            slideImageUrl: slideImageUrl
         };
 
         const result = await mongoAPI.addProduct(product)

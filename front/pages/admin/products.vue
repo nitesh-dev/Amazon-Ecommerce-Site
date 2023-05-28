@@ -7,7 +7,7 @@ import { ProductData, ScrapData } from '../api/apiDataType';
 import { stringToNumber, unixMillisecondsToDateString } from '../api/utils';
 
 const productUrl = ref("")
-const affiliateUrl = ref("")
+const slideImageUrl = ref("")
 const scrapData = ref(new ScrapData())
 const isLoaded = ref(false)
 const isSubmitting = ref(false)
@@ -16,7 +16,7 @@ const allProducts = ref<ProductData[]>()
 
 var adminId: string | null = null
 
-var isSlideshow = false
+var isSlideshow = ref(false)
 onMounted(function () {
     // temp
     localStorage.setItem("adminId", "abc12345")
@@ -25,7 +25,7 @@ onMounted(function () {
     if(mode == null){
         history.back()
     }else{
-        isSlideshow = mode
+        isSlideshow.value = mode
     }
 
     adminId = getAdminId()
@@ -131,7 +131,7 @@ async function submitProduct() {
         return
     }
 
-    const res = await Api.addProduct(adminId, categoryId, thumbnailUrl, affiliateUrl.value, scrapData.value)
+    const res = await Api.addProduct(adminId, categoryId, thumbnailUrl, productUrl.value, slideImageUrl.value, scrapData.value)
     isSubmitting.value = false
     if (res.isError) {
         alert(res.error)
@@ -140,7 +140,7 @@ async function submitProduct() {
             alert("Something went wrong")
         } else {
             productUrl.value = ""
-            affiliateUrl.value = ""
+            slideImageUrl.value = ""
             loadData()
         }
     }
@@ -176,7 +176,7 @@ function adjustTextareaHeight(target: EventTarget | null) {
             <div class="add-product">
                 <form method="get" @submit.prevent="startScrapping">
                     <input type="url" placeholder="Product url" v-model="productUrl" required>
-                    <input type="url" placeholder="Affiliate url" v-model="affiliateUrl" required>
+                    <input type="url" placeholder="Slideshow Url" v-model="slideImageUrl" required v-if="isSlideshow">
                     <button type="submit">
                         <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path

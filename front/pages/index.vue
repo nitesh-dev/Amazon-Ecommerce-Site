@@ -1,101 +1,119 @@
 <script setup lang='ts'>
 
-function slideLeft() {
-    
+import Api from './api/api'
+import { CategoryData, HomeData, SimpleCategoryData } from './api/apiDataType';
+
+const isLoaded = ref(false)
+
+const slideShowData = ref<HomeData>()
+
+const categoryData = ref<HomeData[]>([])
+
+
+
+onMounted(function () {
+    loadData()
+})
+
+async function loadData() {
+    isLoaded.value = false
+    const res = await Api.getHomeData()
+    if (res.isError) {
+        alert(res.error)
+    } else {
+        if (res.result == null) {
+            alert("Something went wrong")
+        } else {
+            categoryData.value?.splice(0)
+            res.result.forEach(data => {
+                if (data.category.isSlide) {
+                    slideShowData.value = data
+                } else {
+                    categoryData.value?.push(data)
+                }
+            });
+            isLoaded.value = true
+        }
+    }
 }
 
-function slideRight() {
 
+function getPopularCount(categoryData: HomeData[]) {
+    if (categoryData == undefined) return 1
+
+    let max = 8
+    if (categoryData.length >= max) {
+        return max
+    } else {
+        return categoryData.length
+    }
 }
+
 
 </script>
 <template>
-    <Header></Header>
+    <div class="loader-holder" v-if="!isLoaded">
+        <div class="loader"></div>
+    </div>
+
+    <Header v-if="isLoaded"></Header>
+
+    <!-- Slideshow -->
     <section class="container">
-        <div class="slideshow">
-            <div class="image-container-holder">
-                <button class="left"><img src="/images/arrow.svg" alt=""></button>
-                <div class="image-container">
-                    <div class="image-holder">
-                        <img src="/images/image_1.jpg" alt="">
-                    </div>
-                    <div class="image-holder">
-                        <img src="/images/image_3.jpg" alt="">
-                    </div>
-                    <div class="image-holder">
-                        <img src="/images/image_3.jpg" alt="">
-                    </div>
-                    <div class="image-holder">
-                        <img src="/images/image_3.jpg" alt="">
-                    </div>
-                    <div class="image-holder">
-                        <img src="/images/image_3.jpg" alt="">
-                    </div>
-                </div>
-                <button class="right"><img src="/images/arrow.svg" alt=""></button>
-            </div>
-
-
-            <div class="marker-container">
-                <div></div>
-                <div class="active"></div>
-                <div></div>
-            </div>
-        </div>
+        <Slideshow :slideshowData="slideShowData" />
     </section>
 
 
-
-    <!-- This is my code -->
     <section class="light">
         <div class="container category">
             <div>
                 <h1 class="responsive-margin">Popular Categories</h1>
                 <hr>
                 <div class="category-div responsive-margin">
-                    <div v-for="item in 5">
-                        <div class="image-container"><img src="../public/images/image_3.jpg" alt="ddf"></div>
+                    <NuxtLink :to="`/category?categoryId=${categoryData[index - 1]?.category.categoryId}`"
+                        v-for="index in getPopularCount(categoryData)">
                         <div>
-                            <p>Item 1</p>
-                            <p>120 items</p>
+                            <div class="image-container">
+                                <img :src="categoryData[index - 1]?.category.imageUrl"
+                                    :alt="categoryData[index - 1]?.category.name">
+                            </div>
+                            <div>
+                                <p>{{ categoryData[index - 1]?.category.name }}</p>
+                                <p>{{ categoryData[index - 1]?.category.count }} items</p>
+                            </div>
                         </div>
+                    </NuxtLink>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="light" v-for="category, index in categoryData">
+        <div class="container products">
+            <h2 class="responsive-margin">{{ category.category.name }}</h2>
+            <div class="card-container responsive-margin">
+                <NuxtLink v-for="item in category.products" :to="`/product?productId=${item.productId}`">
+                    <ProductCard :name="item.name" :imageUrl="item.imageUrl" :rating="item.rating"
+                        :reviewCount="item.reviewCount" :disPrice="item.discountPrice" :price="item.price" />
+                </NuxtLink>
+
+
+                <NuxtLink :to="`/category?categoryId=${category.category.categoryId}`" v-if="category.category.count > 7">
+                    <div class="show-more">
+                        <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M13.267 4.209a.75.75 0 0 0-1.034 1.086l6.251 5.955H3.75a.75.75 0 0 0 0 1.5h14.734l-6.251 5.954a.75.75 0 0 0 1.034 1.087l7.42-7.067a.996.996 0 0 0 .3-.58.758.758 0 0 0-.001-.29.995.995 0 0 0-.3-.578l-7.419-7.067Z" />
+                        </svg>
+                        <span>View All</span>
                     </div>
-                </div>
+                </NuxtLink>
+
             </div>
         </div>
     </section>
 
-    <section class="light">
-        <div class="container products">
-            <h2 class="responsive-margin">Watches</h2>
-            <div class="card-container responsive-margin">
-                <ProductCard v-for="item in 7" />
-                <div class="show-more">
-                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M13.267 4.209a.75.75 0 0 0-1.034 1.086l6.251 5.955H3.75a.75.75 0 0 0 0 1.5h14.734l-6.251 5.954a.75.75 0 0 0 1.034 1.087l7.42-7.067a.996.996 0 0 0 .3-.58.758.758 0 0 0-.001-.29.995.995 0 0 0-.3-.578l-7.419-7.067Z" />
-                    </svg>
-                    <span>View All</span>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <section class="light">
-        <div class="container products">
-            <h2 class="responsive-margin">Watches</h2>
-            <div class="card-container responsive-margin">
-                <ProductCard v-for="item in 7" />
-                <div class="show-more">
-                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M13.267 4.209a.75.75 0 0 0-1.034 1.086l6.251 5.955H3.75a.75.75 0 0 0 0 1.5h14.734l-6.251 5.954a.75.75 0 0 0 1.034 1.087l7.42-7.067a.996.996 0 0 0 .3-.58.758.758 0 0 0-.001-.29.995.995 0 0 0-.3-.578l-7.419-7.067Z" />
-                    </svg>
-                    <span>View All</span>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <section class="container profile">
         <h2>About Owner</h2>
@@ -104,29 +122,30 @@ function slideRight() {
                 <img src="../public/images/kishan_image.jpg">
                 <h3>Kishan kr</h3>
             </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+                commodo consequat.</p>
         </div>
     </section>
 
-    <Footer></Footer>
+    <Footer v-if="isLoaded"></Footer>
 </template>
 <style scoped>
-
-.profile{
+.profile {
     margin-top: 4rem;
     color: var(--color-on-secondary);
 }
 
-.profile h2{
+.profile h2 {
     text-align: center;
 }
 
-.profile p{
+.profile p {
     font-size: var(--medium-font);
 }
 
 
-.profile-container{
+.profile-container {
     padding: 1.5rem;
     margin: 2rem auto;
     max-width: 600px;
@@ -135,21 +154,22 @@ function slideRight() {
     border-radius: var(--radius-medium);
 }
 
-.profile-container div{
+.profile-container div {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-.profile-container img{
+.profile-container img {
     width: 60px;
     height: auto;
     border-radius: 50%;
 }
 
-.profile-container h3{
+.profile-container h3 {
     font-weight: 600;
 }
+
 .card-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -158,7 +178,7 @@ function slideRight() {
     margin-bottom: 2rem;
 }
 
-.show-more{
+.show-more {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -168,9 +188,10 @@ function slideRight() {
     border: 1px solid var(--color-surface-dark);
     font-size: var(--medium-font);
     color: var(--color-primary);
+    height: 100%;
 }
 
-.show-more svg{
+.show-more svg {
     fill: var(--color-primary);
 }
 
@@ -184,6 +205,11 @@ function slideRight() {
 .responsive-margin {
     margin-left: 1rem;
     margin-right: 1rem;
+}
+
+a {
+    color: var(--color-on-secondary);
+    text-decoration: none;
 }
 
 
@@ -217,6 +243,10 @@ function slideRight() {
     gap: 1rem;
 }
 
+.category-div a {
+    text-decoration: none;
+}
+
 .category-div .image-container {
     display: flex;
     align-items: center;
@@ -225,7 +255,7 @@ function slideRight() {
 .category-div div div p:first-child {
     color: var(--color-on-secondary);
     font-weight: 600;
-    font-size: var(--medium2-font);
+    font-size: var(--medium-font);
 }
 
 .category-div img {
@@ -236,7 +266,7 @@ function slideRight() {
 
 }
 
-.category-div>div {
+.category-div>a>div {
     display: flex;
     align-items: center;
     gap: 16px;
@@ -248,6 +278,7 @@ function slideRight() {
 
 .category-div p {
     margin: 0;
+    font-size: var(--small-font);
 }
 
 /* End of the CSS  */
@@ -255,74 +286,6 @@ function slideRight() {
 
 
 
-
-.slideshow {
-    margin-top: 50px;
-    overflow-x: hidden;
-    margin-bottom: 2rem;
-}
-
-.slideshow .image-container-holder {
-    position: relative;
-}
-
-.slideshow .image-container-holder>button {
-    position: absolute;
-    top: 50%;
-    translate: 0 -50%;
-    border: none;
-    outline: none;
-    border-radius: 0;
-    height: 60px;
-    background-color: rgb(255, 255, 255);
-}
-
-.slideshow .image-container-holder>button.left img {
-    transform: rotate(180deg);
-}
-
-.slideshow .image-container-holder>button.right {
-    right: 0;
-}
-
-
-.slideshow .image-container {
-    display: flex;
-    flex-direction: row;
-    gap: 24px;
-}
-
-.slideshow .image-holder {
-    width: 100%;
-    flex: 0 0 auto;
-}
-
-.image-holder img {
-    width: 100%;
-    height: auto;
-    max-height: 400px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-
-.marker-container {
-    margin-top: 16px;
-    display: flex;
-    gap: 4px;
-    justify-content: center;
-}
-
-.marker-container div {
-    width: 20px;
-    height: 4px;
-    background-color: var(--color-surface-dark);
-}
-
-.marker-container .active {
-    width: 30px;
-    background-color: var(--color-primary);
-}
 
 
 

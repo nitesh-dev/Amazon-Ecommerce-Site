@@ -1,5 +1,5 @@
 import mongoose, { Collection } from "mongoose";
-import { Category, CategoryData, Product, ProductData, SimpleCategoryData, SimpleProductData } from "./models.js"
+import { Category, CategoryData, HomeData, Product, ProductData, SimpleCategoryData, SimpleProductData } from "./models.js"
 
 class MongoAPI {
 
@@ -233,10 +233,11 @@ class MongoAPI {
                         }
                     }
 
-                    return {
-                        categoryData: category,
-                        products: products,
-                    };
+                    let data: HomeData = {
+                        category: category,
+                        products: products
+                    }
+                    return data
                 })
             );
 

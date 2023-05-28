@@ -1,25 +1,56 @@
 <script setup lang='ts'>
+
+const props = defineProps({
+  name: String,
+  imageUrl: String,
+  rating: Number,
+  reviewCount: Number,
+  disPrice: Number,
+  price: Number
+})
+
+
+function getStarImage(max: number) {
+    const rating = props.rating
+
+    if (rating == undefined) return "/icons/empty_star.svg"
+
+    if (rating < max && rating > (max - 10)) {
+        return '/icons/half_star.svg';
+    } else if (rating >= max) {
+        return '/icons/full_star.svg';
+    } else {
+        return '/icons/empty_star.svg';
+    }
+}
+
+function urlToLandingUrl(url: string) {
+    //._SX522_.
+    const lastIndex = url.lastIndexOf('.')
+    const left = url.slice(0, lastIndex)
+    const right = url.slice(lastIndex + 1, url.length)
+    const modifiedUrl = left + "._AC_UL320_." + right
+    console.log(modifiedUrl)
+    return modifiedUrl
+}
+
 </script>
 <template>
     <div class="category-card">
         <div class="top">
-            <img src="https://m.media-amazon.com/images/I/41NFpBMSe4L._AC_SY200_.jpg">
+            <img :src="urlToLandingUrl(imageUrl!!)">
         </div>
         <div class="bottom">
-            <h3>OnePlus Nord CE 2 Lite 5G (Blue Tide, 6GB RAM, 128GB Storage)</h3>
+            <h3>{{ name }}</h3>
             <div class="rating">
                 <div>
-                    <img src="../public/icons/full_star.svg">
-                    <img src="../public/icons/full_star.svg">
-                    <img src="../public/icons/full_star.svg">
-                    <img src="../public/icons/half_star.svg">
-                    <img src="../public/icons/empty_star.svg">
+                    <img v-for="index in 5" :src="getStarImage(index * 10)">
                 </div>
-                <span>(10,009)</span>
+                <span>({{ reviewCount?.toLocaleString() }})</span>
             </div>
             <div class="pricing">
-                <span>₹10,999</span>
-                <span>₹15,999</span>
+                <span>₹{{ disPrice?.toLocaleString() }}</span>
+                <span>₹{{ price?.toLocaleString() }}</span>
             </div>
         </div>
     </div>
@@ -60,6 +91,7 @@
 .category-card .top img {
     width: 70%;
     height: auto;
+    mix-blend-mode: multiply;
 }
 
 
