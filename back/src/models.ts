@@ -50,6 +50,32 @@ export class ScrapData {
 }
 
 
+export interface SimpleProductData{
+  categoryId: number,
+  productId: number,
+  views: number,
+  name: string,
+  rating: number,
+  reviewCount: number,
+  price: number,
+  discountPrice: number,
+  imageUrl: string,
+  slideImageUrl: string
+}
+
+export interface SimpleCategoryData {
+  categoryId: number,
+  name: string,
+  imageUrl: string,
+  count: number,
+  isSlide: boolean
+}
+export interface HomeData{
+  category: SimpleCategoryData, 
+  products: SimpleProductData[]
+}
+
+
 
 // -------------- Account ----------------
 
@@ -69,7 +95,8 @@ export interface ProductData {
   affiliateUrl: string,
   allDetail: string,
   imageUrl: string,
-  scrapUrl: string
+  scrapUrl: string,
+  slideImageUrl: string
 }
 
 const productSchema = new Schema({
@@ -88,6 +115,7 @@ const productSchema = new Schema({
   allDetail: { type: String, required: true },
   imageUrl: { type: String, required: true },
   scrapUrl: { type: String, required: true },
+  slideImageUrl: { type: String},
 
 });
 
@@ -106,7 +134,8 @@ export interface CategoryData {
   createAt: number,
   name: string,
   imageUrl: string,
-  count: number
+  count: number,
+  isSlide: boolean
 }
 
 const categorySchema = new Schema({
@@ -118,6 +147,7 @@ const categorySchema = new Schema({
   name: { type: String, required: true },
   imageUrl: { type: String, required: true },
   count: { type: Number, required: true },
+  isSlide: { type: Boolean, required: true },
 
 });
 

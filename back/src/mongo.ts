@@ -1,5 +1,5 @@
 import mongoose, { Collection } from "mongoose";
-import { Category, CategoryData, Product, ProductData } from "./models.js"
+import { Category, CategoryData, Product, ProductData, SimpleCategoryData, SimpleProductData } from "./models.js"
 
 class MongoAPI {
 
@@ -81,6 +81,17 @@ class MongoAPI {
         }
     }
 
+    async getAllSimpleCategory() {
+        try {
+            const categories = await Category.find().select('-_id categoryId name imageUrl count isSlide').lean()
+            return categories as SimpleCategoryData[];
+
+        } catch (error) {
+            console.error('Error saving product:', error);
+            return null
+        }
+    }
+
 
 
 
@@ -155,6 +166,73 @@ class MongoAPI {
     }
 
 
+
+    async getSimpleProducts(categoryId: number, limit: number) {
+        try {
+            const isExist = await this.getCategory(categoryId)
+            if (isExist == null) {
+                return null
+            }
+
+            if (limit == 0) {
+                const product = await Product
+                    .find({ categoryId: categoryId })
+                    .select('-_id categoryId productId views name rating reviewCount price discountPrice imageUrl slideImageUrl')
+                    .sort({ views: -1 })
+                return product as SimpleProductData[]
+
+            } else {
+                const product = await Product
+                    .find({ categoryId: categoryId })
+                    .select('-_id categoryId productId views name rating reviewCount price discountPrice imageUrl slideImageUrl')
+                    .sort({ views: -1 })
+                    .limit(limit) as SimpleProductData[]
+                return product;
+            }
+
+
+        } catch (error) {
+            console.error('Error saving product:', error);
+            return null
+        }
+    }
+
+
+
+    async getHomePageData() {
+        try {
+            const categories = await this.getAllSimpleCategory()
+            if (categories == null) return null
+
+            const categoryDataWithProducts = await Promise.all(
+                categories.map(async (category) => {
+
+                    var products: SimpleProductData[] = []
+                    if (category.isSlide == true) {
+                        const data = await this.getSimpleProducts(category.categoryId, 0)
+                        if (data != null) {
+                            products = data
+                        }
+                    } else {
+                        const data = await this.getSimpleProducts(category.categoryId, 7)
+                        if (data != null) {
+                            products = data
+                        }
+                    }
+
+                    return {
+                        categoryData: category,
+                        products: products,
+                    };
+                })
+            );
+
+            return categoryDataWithProducts;
+        } catch (error) {
+            console.error('Error fetching category data with products:', error);
+            return null;
+        }
+    }
 }
 
 export default MongoAPI

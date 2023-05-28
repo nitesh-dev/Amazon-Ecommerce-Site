@@ -152,6 +152,13 @@ app.get('/all-category', async (req, res) => {
 
 app.get('/home', async (req, res) => {
 
+    const data = await mongoAPI.getHomePageData()
+    if (data == null) {
+        res.status(404).send("Not Found")
+    } else {
+        res.status(200).send(data)
+    }
+
 })
 
 
@@ -178,7 +185,8 @@ app.post('/admin/category', async (req, res) => {
         createAt: id,
         name: categoryName,
         imageUrl: imageUrl,
-        count: 0
+        count: 0,
+        isSlide: false
     }
 
     const result = await mongoAPI.addCategory(data)
@@ -229,7 +237,8 @@ app.post('/admin/product', async (req, res) => {
             views: 0,
             createAt: id,
             imageUrl: imageUrl,
-            scrapUrl: data.scrapUrl
+            scrapUrl: data.scrapUrl,
+            slideImageUrl: ''
         };
 
         const result = await mongoAPI.addProduct(product)
