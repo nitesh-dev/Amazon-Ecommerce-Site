@@ -402,11 +402,13 @@ function adjustTextareaHeight(target: EventTarget | null) {
                         <col style="width: auto;">
                         <col style="width: auto;">
                         <col style="width: auto;">
+                        <col style="width: auto;">
                         <col style="width: 5rem;">
                     </colgroup>
                     <thead>
                         <tr>
                             <th>#</th>
+                            <th>Product Id</th>
                             <th>Name</th>
                             <th>Click</th>
                             <th>Views</th>
@@ -419,6 +421,7 @@ function adjustTextareaHeight(target: EventTarget | null) {
 
                         <tr v-for="product, index in allProducts">
                             <td>{{ index }}</td>
+                            <td>{{ product.productId }}</td>
                             <td>{{ product.name }}</td>
                             <td>{{ product.clicks }}</td>
                             <td>{{ product.views }}</td>

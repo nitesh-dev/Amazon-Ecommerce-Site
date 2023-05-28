@@ -97,9 +97,59 @@ function slideRight() {
         </div>
     </section>
 
+    <section class="container profile">
+        <h2>About Owner</h2>
+        <div class="profile-container">
+            <div>
+                <img src="../public/images/kishan_image.jpg">
+                <h3>Kishan kr</h3>
+            </div>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        </div>
+    </section>
+
     <Footer></Footer>
 </template>
 <style scoped>
+
+.profile{
+    margin-top: 4rem;
+    color: var(--color-on-secondary);
+}
+
+.profile h2{
+    text-align: center;
+}
+
+.profile p{
+    font-size: var(--medium-font);
+}
+
+
+.profile-container{
+    padding: 1.5rem;
+    margin: 2rem auto;
+    max-width: 600px;
+    width: 100%;
+    background-color: var(--color-surface-variant);
+    border-radius: var(--radius-medium);
+}
+
+.profile-container div{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.profile-container img{
+    width: 60px;
+    height: auto;
+    border-radius: 50%;
+}
+
+.profile-container h3{
+    font-weight: 600;
+}
 .card-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
