@@ -12,8 +12,13 @@ const productMoreDetail = ref<SimpleScrapData>()
 const isLoaded = ref(false)
 onMounted(function () {
     // temp
+    setTitle('Product')
     loadData()
 })
+
+function setTitle(title: string){
+    document.title = title
+}
 
 
 function urlToFeaturesUrl(url: string) {

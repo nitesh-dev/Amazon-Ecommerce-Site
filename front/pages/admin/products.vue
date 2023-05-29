@@ -36,8 +36,13 @@ onMounted(function () {
         return
     }
 
+    setTitle('Category - Admin')
     loadData()
 })
+
+function setTitle(title: string){
+    document.title = title
+}
 
 
 

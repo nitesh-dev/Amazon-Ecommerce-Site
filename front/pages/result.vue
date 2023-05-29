@@ -9,8 +9,13 @@ const isLoaded = ref(false)
 const allProducts = ref<SimpleProductData[]>([])
 
 onMounted(function () {
+    setTitle('Search')
     loadData()
 })
+
+function setTitle(title: string){
+    document.title = title
+}
 
 async function loadData() {
     const search = getSearchString()

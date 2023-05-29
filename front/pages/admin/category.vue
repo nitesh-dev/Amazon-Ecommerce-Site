@@ -24,7 +24,7 @@ onMounted(function () {
         window.location.href = "/"
         return
     }
-
+    setTitle('Home - Admin')
     loadData()
 })
 
@@ -32,6 +32,9 @@ function getAdminId() {
     return localStorage.getItem("adminId")
 }
 
+function setTitle(title: string){
+    document.title = title
+}
 
 async function loadData() {
     isLoaded.value = false

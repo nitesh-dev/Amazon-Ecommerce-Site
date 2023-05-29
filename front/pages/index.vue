@@ -9,8 +9,12 @@ const slideShowData = ref<HomeData>()
 const categoryData = ref<HomeData[]>([])
 
 
+function setTitle(title: string){
+    document.title = title
+}
 
 onMounted(function () {
+    setTitle('Home - ShopCart')
     loadData()
 })
 
