@@ -125,6 +125,17 @@ app.get('/category-all-products', async (req, res) => {
     }
 })
 
+app.get('/search', async (req, res) => {
+
+    let search = req.query.search as string
+    const data = await mongoAPI.getSearchedProducts(search, 15)
+    if (data == null) {
+        res.status(404).send("Not Found")
+    } else {
+        res.status(200).send(data)
+    }
+})
+
 
 
 

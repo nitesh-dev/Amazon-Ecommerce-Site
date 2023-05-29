@@ -160,7 +160,7 @@ class MongoAPI {
         }
     }
 
-    updateProductClick(productId: number){
+    updateProductClick(productId: number) {
         try {
             Product.findOneAndUpdate(
                 { productId: productId },
@@ -171,7 +171,7 @@ class MongoAPI {
         }
     }
 
-    updateCategoryClick(categoryId: number){
+    updateCategoryClick(categoryId: number) {
         try {
             Category.findOneAndUpdate(
                 { categoryId: categoryId },
@@ -209,6 +209,25 @@ class MongoAPI {
     }
 
 
+    async getSearchedProducts(search: string, limit: number) {
+        try {
+            const product = await Product
+                .find({
+                    $or: [
+                      { name: { $regex: search, $options: 'i' } }
+                    ]
+                  })
+                .select('-_id categoryId productId views name rating reviewCount price discountPrice imageUrl slideImageUrl')
+                .sort({ views: -1 })
+                .limit(limit) as SimpleProductData[]
+            return product;
+
+
+        } catch (error) {
+            console.error('Error saving product:', error);
+            return null
+        }
+    }
 
     async getSimpleProducts(categoryId: number, limit: number) {
         try {

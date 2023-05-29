@@ -27,6 +27,9 @@ namespace Api {
         return get<HomeData[]>("home", '')
     }
 
+    export async function getSearchProducts(search: string) {
+        return get<SimpleProductData[]>("search", `search=${search}`)
+    }
 
     export async function getCategoryAllProducts(categoryId: number) {
         return get<SimpleProductData[]>("category-all-products", `categoryId=${categoryId}`)

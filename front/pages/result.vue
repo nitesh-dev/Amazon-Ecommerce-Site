@@ -1,35 +1,82 @@
 <script setup lang='ts'>
+import Api from './api/api'
+import { SimpleProductData } from './api/apiDataType';
+import { stringToNumber } from './api/utils';
+const isLoaded = ref(false)
+
+const allProducts = ref<SimpleProductData[]>([])
+
+onMounted(function () {
+    loadData()
+})
+
+async function loadData() {
+    const search = getSearchString()
+    isLoaded.value = false
+    const res = await Api.getSearchProducts(search)
+    if (res.isError) {
+        alert(res.error)
+    } else {
+        if (res.result == null) {
+            alert("Something went wrong")
+        } else {
+            allProducts.value = res.result
+            isLoaded.value = true
+        }
+    }
+}
+
+
+function getSearchString() {
+    const currentUrl = window.location.href;
+    const url = new URL(currentUrl);
+    const search = `${url.searchParams.get("search")}`
+    return search
+}
+
+
+
+function getStarImage(max: number, rating: number) {
+    if (rating == undefined) return "/icons/empty_star.svg"
+
+    if (rating < max && rating > (max - 10)) {
+        return '/icons/half_star.svg';
+    } else if (rating >= max) {
+        return '/icons/full_star.svg';
+    } else {
+        return '/icons/empty_star.svg';
+    }
+}
+
 </script>
 <template>
-    <Header></Header>
-    <section class="container result-container">
-        <a href="#" v-for="item in 10">
+    <div class="loader-holder" v-if="!isLoaded">
+        <div class="loader"></div>
+    </div>
+
+    <Header v-if="isLoaded"></Header>
+    <section v-if="isLoaded" class="container result-container">
+        <a :href="`/product?productId=${product.productId}`" v-for="product in allProducts">
             <div class="result-card">
                 <div class="image-holder">
-                    <img src="https://m.media-amazon.com/images/I/814ePfNubRL._AC_UY218_.jpg">
+                    <img :src="product.imageUrl">
                 </div>
                 <div class="detail">
-                    <h3>boAt Xtend/Xtend RTL Smartwatch with Alexa Built-in, 1.69” HD Display, Multiple Watch Faces, Stress
-                        Monitor, Heart & SpO2 Monitoring, 14 Sports Modes, 5 ATM & 7 Days Battery(Sandy Cream)
-                    </h3>
+                    <h3>{{ product.name }}</h3>
                     <div class="rating">
-                        <img src="../public/icons/full_star.svg">
-                        <img src="../public/icons/full_star.svg">
-                        <img src="../public/icons/full_star.svg">
-                        <img src="../public/icons/half_star.svg">
-                        <img src="../public/icons/empty_star.svg">
-                        <span>(10,009)</span>
+                        <img v-for="index in 5" :src="getStarImage(index * 10, product.rating)">
+                        <span>({{ product.reviewCount.toLocaleString() }})</span>
                     </div>
                     <div class="pricing">
-                        <span>₹10,999</span>
-                        <span>₹15,999</span>
+                        <span>₹{{ product.discountPrice.toLocaleString() }}</span>
+                        <span>₹{{ product.price.toLocaleString() }}</span>
 
                     </div>
                 </div>
             </div>
         </a>
     </section>
-    <Footer></Footer>
+    <Footer v-if="isLoaded"></Footer>
 </template>
 <style scoped>
 a {
@@ -62,6 +109,7 @@ a {
     width: auto;
     height: 200px;
     margin: 2rem 0;
+    mix-blend-mode: multiply;
 }
 
 .result-card .detail {

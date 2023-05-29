@@ -125,9 +125,7 @@ function updateCategoryClick(categoryId: number){
                 <img src="../public/images/kishan_image.jpg">
                 <h3>Kishan kr</h3>
             </div>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat.</p>
+            <p>Meet Kishan, a skilled affiliate marketer with a passion for digital entrepreneurship. With an unwavering commitment to success, Kishan has established himself as a prominent figure in the world of online marketing. Armed with his strategic mindset and deep understanding of consumer behavior, he consistently crafts compelling campaigns that drive impressive conversions. Kishan's innovative approach to affiliate marketing sets him apart, as he effortlessly combines his creativity with data-driven insights to optimize results. Through his unwavering dedication and relentless pursuit of excellence, Kishan has built a reputation as a trusted and influential affiliate marketer, helping both brands and fellow marketers achieve their goals in the dynamic digital landscape. His impressive track record and genuine enthusiasm for the industry make Kishan an invaluable asset to any affiliate marketing endeavor.</p>
         </div>
     </section>
 
@@ -151,7 +149,7 @@ function updateCategoryClick(categoryId: number){
 .profile-container {
     padding: 1.5rem;
     margin: 2rem auto;
-    max-width: 600px;
+    max-width: 800px;
     width: 100%;
     background-color: var(--color-surface-variant);
     border-radius: var(--radius-medium);

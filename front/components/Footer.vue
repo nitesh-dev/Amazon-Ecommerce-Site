@@ -5,17 +5,17 @@
         <div class="container section">
             <div class="grid">
                 <div class="left">
-                    <h2>Shopcart</h2>
+                    <div class="header">
+                        <div>
+                            <img src="../icons/shop.png" alt="">
+                        </div>
+                        <h2>Shopcart</h2>
+                    </div>
+                    
                     <p>Discover endless possibilities at our premier eCommerce shopping website. From fashion to electronics, home decor to gifts, we have it all. Enjoy secure transactions, reliable shipping, and exceptional customer support. Embrace the joy of online shopping and explore a world of convenience and style today.</p>
                 </div>
                 <div class="right">
-                    <ul>
-                        <li class="heading">Categories</li>
-                        <li><NuxtLink to="/terms" class="link">Shoes</NuxtLink></li>
-                        <li><NuxtLink to="/privacy" class="link">Phones</NuxtLink></li>
-                        <li><NuxtLink to="/rules" class="link">Watches</NuxtLink></li>
-                    </ul>
-
+                   
                     <ul>
                         <li class="heading">More</li>
                         <li><NuxtLink to="/blogs" class="link">About</NuxtLink></li>
@@ -46,7 +46,7 @@
 }
 #footer .grid {
     display: grid;
-    grid-template-columns: 4fr 5fr;
+    grid-template-columns: 100%;
     gap: 40px;
 }
 
@@ -66,17 +66,40 @@
 #footer h2 {
     font-size: var(--big2-font);
     font-weight: 600;
-    margin-top: 0;
+    margin: 0;
 }
 
+
+#footer .left .header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: auto;
+    gap: 0.5rem;
+    margin: 0 1rem;
+}
+
+
+#footer .left .header div{
+    padding: 12px;
+    background-color: rgba(255, 255, 255, 0.219);
+    border-radius: 50px;
+}
+#footer .left img{
+    display: block;
+    width: 36px;
+    height: 36px;
+}
 #footer .left p {
-    margin-top: 12px;
+    margin: 1rem;
     font-size: var(--medium-font);
 }
 
 #footer .right{
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 40px;
+    text-align: center;
 }
 
 
@@ -128,10 +151,6 @@
   }
 
   #footer .left{
-    text-align: center;
-  }
-  #footer .right{
-    margin-top: 40px;
     text-align: center;
   }
 }

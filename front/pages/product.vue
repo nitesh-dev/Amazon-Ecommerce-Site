@@ -205,13 +205,17 @@ function updateProductClick(productId: number | undefined){
 
 .product-container .image-holder {
     aspect-ratio: 1/1;
+    border: 1px solid var(--color-surface-dark);
+    border-radius: var(--radius-medium);
+    background-color: var(--color-surface);
 }
 
 .product-container .image-container img {
 
+    mix-blend-mode: multiply;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: var(--radius-medium);
 
 }
