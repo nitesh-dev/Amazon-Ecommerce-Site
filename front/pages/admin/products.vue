@@ -201,6 +201,27 @@ async function onDeleteSubmit(productId: number, categoryId: number, name: strin
 }
 
 
+function removeBasicInfoData(index: number){
+    scrapData.value.smallInfo.splice(index, 1)
+}
+
+function removeTechnicalData(index: number){
+    scrapData.value.technicalDetails.splice(index, 1)
+}
+
+function removeAboutData(index: number){
+    scrapData.value.aboutItem.splice(index, 1)
+}
+
+function removeFeatureData(index: number){
+    scrapData.value.featureImages.splice(index, 1)
+}
+
+function removeLandingData(index: number){
+    scrapData.value.landingImages.splice(index, 1)
+}
+
+
 </script>
 <template>
     <div class="loader-holder" v-if="!isLoaded">
@@ -283,7 +304,7 @@ async function onDeleteSubmit(productId: number, categoryId: number, name: strin
                             <td><input type="text" v-model="item.content" /></td>
 
                             <td>
-                                <button class="delete">
+                                <button class="delete" @click="removeBasicInfoData(index)">
                                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -323,7 +344,7 @@ async function onDeleteSubmit(productId: number, categoryId: number, name: strin
                             <td><input type="text" v-model="item.content" /></td>
 
                             <td>
-                                <button class="delete">
+                                <button class="delete" @click="removeTechnicalData(index)">
                                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -360,7 +381,7 @@ async function onDeleteSubmit(productId: number, categoryId: number, name: strin
                                     @input="adjustTextareaHeight($event.target)"></textarea></td>
 
                             <td>
-                                <button class="delete">
+                                <button class="delete" @click="removeAboutData(index)">
                                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -395,7 +416,7 @@ async function onDeleteSubmit(productId: number, categoryId: number, name: strin
                             <td>{{ index }}</td>
                             <td>{{ item }}</td>
                             <td>
-                                <button class="delete">
+                                <button class="delete" @click="removeFeatureData(index)">
                                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -430,7 +451,7 @@ async function onDeleteSubmit(productId: number, categoryId: number, name: strin
                             <td>{{ index }}</td>
                             <td>{{ item }}</td>
                             <td>
-                                <button class="delete">
+                                <button class="delete" @click="removeLandingData(index)">
                                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path
