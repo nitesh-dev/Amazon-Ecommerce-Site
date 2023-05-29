@@ -122,6 +122,16 @@ namespace Api {
         return put("admin/product", "", updateData)
     }
 
+    export async function deleteProduct(adminId: string, productId: number, categoryId: number){
+        let data = {
+            adminId: adminId,
+            productId: productId,
+            categoryId: categoryId
+        }
+        return put("admin/product-delete", "", data)
+    }
+
+
 
 
 

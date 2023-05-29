@@ -307,6 +307,24 @@ app.put('/admin/category-delete', async(req, res) => {
     }
 })
 
+app.put('/admin/product-delete', async(req, res) => {
+    try {
+        let productId = req.body.productId as number
+        let categoryId = req.body.categoryId as number
+
+        const result = await mongoAPI.deleteProduct(productId, categoryId)
+        if (result == null) {
+            res.sendStatus(400)
+        } else {
+            res.sendStatus(200)
+        }
+    } catch (error) {
+        console.log("Bad request")
+        res.status(400).send("Bad request")
+    }
+})
+
+
 
 
 async function isAdmin(adminId: string) {

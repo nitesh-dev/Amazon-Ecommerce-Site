@@ -116,7 +116,6 @@ async function onUpdateSubmit() {
 
 
 
-const isDeleteProcessing = ref(false)
 async function onDeleteSubmit(categoryId: number, name: string, target: EventTarget | null) {
     if(target == null) return
     
@@ -134,9 +133,7 @@ async function onDeleteSubmit(categoryId: number, name: string, target: EventTar
         next.style.display = 'block';
     }
 
-    isDeleteProcessing.value = true
     let res = await Api.deleteCategory(adminId, categoryId)
-    isDeleteProcessing.value = false
 
     if (res.isError) {
         alert('Unable to delete')

@@ -77,6 +77,24 @@ class MongoAPI {
         }
     }
 
+    async deleteProduct(productId: number, categoryId: number) {
+        try {
+            const result = await Product.deleteOne({productId: productId})
+            if (result.deletedCount == 0) {
+                return null
+            }else{
+                await Category.updateOne(
+                    { categoryId: categoryId },
+                    { $inc: { count: -1 } }
+                );
+            }
+            return 1
+        } catch (error) {
+            console.error('Error saving product:', error);
+            return null
+        }
+    }
+
     async addCategory(categoryData: CategoryData) {
 
         try {
@@ -165,7 +183,7 @@ class MongoAPI {
 
             await Category.findOneAndUpdate(
                 { categoryId: productData.categoryId },
-                { $inc: { count: 1, views: 1 } }
+                { $inc: { count: 1} }
             );
 
             console.log("product added")
