@@ -65,7 +65,6 @@
 
 #footer h2 {
     font-size: var(--big2-font);
-    font-weight: 600;
     margin: 0;
 }
 
@@ -119,7 +118,7 @@
 #footer li.heading{
     color: inherit;
     font-size: var(--medium-2-font);
-    font-weight: 600;
+    font-weight: 400;
     margin-bottom: 12px;
 }
 

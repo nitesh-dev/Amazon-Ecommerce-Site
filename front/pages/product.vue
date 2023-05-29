@@ -361,7 +361,7 @@ function updateProductClick(productId: number | undefined) {
 }
 
 .about-container h2 {
-    font-weight: 600;
+    margin-bottom: 1em;
     font-size: var(--big-font);
 }
 
@@ -388,7 +388,7 @@ function updateProductClick(productId: number | undefined) {
 
 .more-detail h2 {
     font-size: var(--big-font);
-    font-weight: 600;
+    margin-bottom: 1em;
 
 }
 
@@ -405,7 +405,7 @@ function updateProductClick(productId: number | undefined) {
 
 .more-detail td {
     padding: 0.7rem;
-    line-height: 1.5;
+    line-height: 1.2;
     font-size: var(--medium-font);
 
 }
@@ -424,7 +424,7 @@ function updateProductClick(productId: number | undefined) {
 .images-list h2 {
     color: var(--color-on-secondary);
     font-size: var(--big-font);
-    font-weight: 600;
+    margin-bottom: 1em;
 }
 
 .images-list img {

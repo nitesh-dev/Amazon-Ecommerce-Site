@@ -153,5 +153,9 @@ function urlToLandingUrl(url: string) {
         color: inherit;
     }
 
+    .pricing span:last-child {
+        font-size: var(--small-font);
+    }
+
 }
 </style>
