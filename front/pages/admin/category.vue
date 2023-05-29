@@ -2,6 +2,8 @@
 import Api from '../api/api';
 import { CategoryData } from '../api/apiDataType';
 import { unixMillisecondsToDateString } from '../api/utils.js';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 
 const isLoaded = ref(false)
@@ -35,7 +37,7 @@ async function loadData() {
     isLoaded.value = false
     const res = await Api.getAllCategory()
     if (res.isError) {
-        alert(res.error)
+        router.push('/error')
     } else {
         if (res.result == null) {
             alert("Something went wrong!")

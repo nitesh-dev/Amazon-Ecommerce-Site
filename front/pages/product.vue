@@ -2,6 +2,8 @@
 import Api from './api/api';
 import { ProductData, SimpleScrapData } from './api/apiDataType';
 import { stringToNumber, unixMillisecondsToDateString } from './api/utils';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 const productData = ref<ProductData>()
 const productMoreDetail = ref<SimpleScrapData>()
@@ -49,16 +51,12 @@ function urlToLandingUrl(url: string) {
 async function loadData() {
     isLoaded.value = false
     const res = await Api.getProduct(getProductId())
-    if (res.isError) {
-        alert(res.error)
+    if (res.isError || res.result == null) {
+        router.push('/error')
     } else {
-        if (res.result == null) {
-            alert("Something went wrong")
-        } else {
-            productData.value = res.result
-            productMoreDetail.value = JSON.parse(res.result.allDetail) as SimpleScrapData
-            isLoaded.value = true
-        }
+        productData.value = res.result
+        productMoreDetail.value = JSON.parse(res.result.allDetail) as SimpleScrapData
+        isLoaded.value = true
     }
 }
 
@@ -92,8 +90,8 @@ function getStarImage(max: number) {
 }
 
 
-function updateProductClick(productId: number | undefined){
-    if(productId == undefined) return
+function updateProductClick(productId: number | undefined) {
+    if (productId == undefined) return
     Api.updateProductClick(productId)
 }
 
@@ -142,7 +140,8 @@ function updateProductClick(productId: number | undefined){
                     <span>₹{{ productData?.price.toLocaleString() }}</span>
 
                 </div>
-                <a @click="updateProductClick(productData?.productId)" target="_blank" :href="productData?.affiliateUrl">Buy from Amazon</a>
+                <a @click="updateProductClick(productData?.productId)" target="_blank" :href="productData?.affiliateUrl">Buy
+                    from Amazon</a>
 
                 <hr>
                 <table>
@@ -204,6 +203,9 @@ function updateProductClick(productId: number | undefined){
 
 
 .product-container .image-holder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     aspect-ratio: 1/1;
     border: 1px solid var(--color-surface-dark);
     border-radius: var(--radius-medium);
@@ -211,10 +213,9 @@ function updateProductClick(productId: number | undefined){
 }
 
 .product-container .image-container img {
-
     mix-blend-mode: multiply;
-    width: 100%;
-    height: 100%;
+    width: 90%;
+    height: 90%;
     object-fit: contain;
     border-radius: var(--radius-medium);
 

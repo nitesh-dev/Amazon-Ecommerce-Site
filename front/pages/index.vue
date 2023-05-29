@@ -1,12 +1,11 @@
 <script setup lang='ts'>
 
 import Api from './api/api'
-import { CategoryData, HomeData, SimpleCategoryData } from './api/apiDataType';
-
+import { HomeData } from './api/apiDataType';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const isLoaded = ref(false)
-
 const slideShowData = ref<HomeData>()
-
 const categoryData = ref<HomeData[]>([])
 
 
@@ -18,22 +17,18 @@ onMounted(function () {
 async function loadData() {
     isLoaded.value = false
     const res = await Api.getHomeData()
-    if (res.isError) {
-        alert(res.error)
+    if (res.isError || res.result == null) {
+        router.push('/error')
     } else {
-        if (res.result == null) {
-            alert("Something went wrong")
-        } else {
-            categoryData.value?.splice(0)
-            res.result.forEach(data => {
-                if (data.category.isSlide) {
-                    slideShowData.value = data
-                } else {
-                    categoryData.value?.push(data)
-                }
-            });
-            isLoaded.value = true
-        }
+        categoryData.value?.splice(0)
+        res.result.forEach(data => {
+            if (data.category.isSlide) {
+                slideShowData.value = data
+            } else {
+                categoryData.value?.push(data)
+            }
+        });
+        isLoaded.value = true
     }
 }
 
@@ -49,7 +44,7 @@ function getPopularCount(categoryData: HomeData[]) {
     }
 }
 
-function updateCategoryClick(categoryId: number){
+function updateCategoryClick(categoryId: number) {
     Api.updateCategoryClick(categoryId)
 }
 
@@ -74,7 +69,8 @@ function updateCategoryClick(categoryId: number){
                 <h1 class="responsive-margin">Popular Categories</h1>
                 <hr>
                 <div class="category-div responsive-margin">
-                    <a target="_blank" @click="updateCategoryClick(categoryData[index - 1]?.category.categoryId)" :href="`/category?categoryId=${categoryData[index - 1]?.category.categoryId}`"
+                    <a target="_blank" @click="updateCategoryClick(categoryData[index - 1]?.category.categoryId)"
+                        :href="`/category?categoryId=${categoryData[index - 1]?.category.categoryId}`"
                         v-for="index in getPopularCount(categoryData)">
                         <div>
                             <div class="image-container">
@@ -103,7 +99,8 @@ function updateCategoryClick(categoryId: number){
                 </a>
 
 
-                <a target="_blank" @click="updateCategoryClick(category.category.categoryId)" :href="`/category?categoryId=${category.category.categoryId}`" v-if="category.category.count > 7">
+                <a target="_blank" @click="updateCategoryClick(category.category.categoryId)"
+                    :href="`/category?categoryId=${category.category.categoryId}`" v-if="category.category.count > 7">
                     <div class="show-more">
                         <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -125,7 +122,15 @@ function updateCategoryClick(categoryId: number){
                 <img src="../public/images/kishan_image.jpg">
                 <h3>Kishan kr</h3>
             </div>
-            <p>Meet Kishan, a skilled affiliate marketer with a passion for digital entrepreneurship. With an unwavering commitment to success, Kishan has established himself as a prominent figure in the world of online marketing. Armed with his strategic mindset and deep understanding of consumer behavior, he consistently crafts compelling campaigns that drive impressive conversions. Kishan's innovative approach to affiliate marketing sets him apart, as he effortlessly combines his creativity with data-driven insights to optimize results. Through his unwavering dedication and relentless pursuit of excellence, Kishan has built a reputation as a trusted and influential affiliate marketer, helping both brands and fellow marketers achieve their goals in the dynamic digital landscape. His impressive track record and genuine enthusiasm for the industry make Kishan an invaluable asset to any affiliate marketing endeavor.</p>
+            <p>Meet Kishan, a skilled affiliate marketer with a passion for digital entrepreneurship. With an unwavering
+                commitment to success, Kishan has established himself as a prominent figure in the world of online
+                marketing. Armed with his strategic mindset and deep understanding of consumer behavior, he consistently
+                crafts compelling campaigns that drive impressive conversions. Kishan's innovative approach to affiliate
+                marketing sets him apart, as he effortlessly combines his creativity with data-driven insights to optimize
+                results. Through his unwavering dedication and relentless pursuit of excellence, Kishan has built a
+                reputation as a trusted and influential affiliate marketer, helping both brands and fellow marketers achieve
+                their goals in the dynamic digital landscape. His impressive track record and genuine enthusiasm for the
+                industry make Kishan an invaluable asset to any affiliate marketing endeavor.</p>
         </div>
     </section>
 
@@ -320,5 +325,4 @@ a {
     .card-container {
         gap: 0.5rem;
     }
-}
-</style>
+}</style>

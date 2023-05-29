@@ -5,6 +5,8 @@
 import Api from '../api/api'
 import { ProductData, ScrapData } from '../api/apiDataType';
 import { stringToNumber, unixMillisecondsToDateString } from '../api/utils';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 const productUrl = ref("")
 const slideImageUrl = ref("")
@@ -60,7 +62,7 @@ async function loadData() {
     status.value = Status.Ideal
     const res = await Api.getCategoryProducts(getCategoryId(), 0)
     if (res.isError) {
-        alert(res.error)
+        router.push('/error')
     } else {
         if (res.result == null) {
             alert("Something went wrong")

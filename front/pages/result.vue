@@ -1,9 +1,11 @@
 <script setup lang='ts'>
+
 import Api from './api/api'
 import { SimpleProductData } from './api/apiDataType';
-import { stringToNumber } from './api/utils';
-const isLoaded = ref(false)
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
+const isLoaded = ref(false)
 const allProducts = ref<SimpleProductData[]>([])
 
 onMounted(function () {
@@ -14,16 +16,22 @@ async function loadData() {
     const search = getSearchString()
     isLoaded.value = false
     const res = await Api.getSearchProducts(search)
-    if (res.isError) {
-        alert(res.error)
+    if (res.isError || res.result == null) {
+        router.push('/error')
     } else {
-        if (res.result == null) {
-            alert("Something went wrong")
-        } else {
-            allProducts.value = res.result
-            isLoaded.value = true
-        }
+        allProducts.value = res.result
+        isLoaded.value = true
     }
+}
+
+function urlToLandingUrl(url: string) {
+    //._SX522_.
+    const lastIndex = url.lastIndexOf('.')
+    const left = url.slice(0, lastIndex)
+    const right = url.slice(lastIndex + 1, url.length)
+    const modifiedUrl = left + "._SX522_." + right
+    console.log(modifiedUrl)
+    return modifiedUrl
 }
 
 
@@ -59,7 +67,7 @@ function getStarImage(max: number, rating: number) {
         <a :href="`/product?productId=${product.productId}`" v-for="product in allProducts">
             <div class="result-card">
                 <div class="image-holder">
-                    <img :src="product.imageUrl">
+                    <img :src="urlToLandingUrl(product.imageUrl)" :alt="product.name">
                 </div>
                 <div class="detail">
                     <h3>{{ product.name }}</h3>
@@ -106,9 +114,10 @@ a {
 }
 
 .result-card .image-holder img {
-    width: auto;
-    height: 200px;
+    width: 180px;
+    height: 180px;
     margin: 2rem 0;
+    object-fit: contain;
     mix-blend-mode: multiply;
 }
 
