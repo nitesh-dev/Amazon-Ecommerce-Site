@@ -152,6 +152,7 @@ function updateCategoryClick(categoryId: number) {
 }
 
 .profile p {
+    margin-top: 1em;
     font-size: var(--medium-font);
 }
 
@@ -209,6 +210,10 @@ function updateCategoryClick(categoryId: number) {
 
 .products {
     padding: 2rem 0;
+}
+
+.products h2{
+    margin-bottom: 1em;
 }
 
 
@@ -325,6 +330,7 @@ a {
 @media only screen and (max-width: 600px) {
     .category-div {
         grid-template-columns: 1fr;
+        gap: 0.4rem;
     }
 
     .card-container {

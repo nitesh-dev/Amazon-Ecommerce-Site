@@ -164,7 +164,7 @@ function openProduct(id: number) {
 
 @media only screen and (max-width: 800px) {
     .slideshow {
-        margin: 0 !important;
+        margin: 2rem 0 !important;
     }
 
     .slideshow .image-container-holder>button {

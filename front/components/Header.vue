@@ -3,8 +3,17 @@
 
 const search = ref("")
 
+function toggleSearch(isHidden: boolean) {
+    let element = document.querySelector('#search')
+    if(isHidden){
+        element?.classList.remove('search-active')
+    }else{
+        element?.classList.add('search-active')
+    }
+}
 
 function searchProducts() {
+    toggleSearch(true)
     location.href = `/result?search=${search.value}`
 }
 
@@ -19,7 +28,7 @@ function searchProducts() {
                 </NuxtLink>
             </div>
 
-            <div class="search">
+            <div class="search" id="search">
                 <div class="search-holder">
                     <form method="get" @submit.prevent="searchProducts">
                         <input type="text" v-model="search" placeholder="Search products">
@@ -27,12 +36,17 @@ function searchProducts() {
                             <path
                                 d="M10 2.75a7.25 7.25 0 0 1 5.63 11.819l4.9 4.9a.75.75 0 0 1-.976 1.134l-.084-.073-4.901-4.9A7.25 7.25 0 1 1 10 2.75Zm0 1.5a5.75 5.75 0 1 0 0 11.5 5.75 5.75 0 0 0 0-11.5Z" />
                         </svg>
+                        <svg @click="toggleSearch(true)" class="close" width="24" height="24" fill="none" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M11.75 3a.75.75 0 0 1 .743.648l.007.102.001 7.25h7.253a.75.75 0 0 1 .102 1.493l-.102.007h-7.253l.002 7.25a.75.75 0 0 1-1.493.101l-.007-.102-.002-7.249H3.752a.75.75 0 0 1-.102-1.493L3.752 11h7.25L11 3.75a.75.75 0 0 1 .75-.75Z" />
+                        </svg>
                     </form>
                 </div>
             </div>
 
             <div class="search-phone">
-                <button>
+                <button @click="toggleSearch(false)">
                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M10 2.75a7.25 7.25 0 0 1 5.63 11.819l4.9 4.9a.75.75 0 0 1-.976 1.134l-.084-.073-4.901-4.9A7.25 7.25 0 1 1 10 2.75Zm0 1.5a5.75 5.75 0 1 0 0 11.5 5.75 5.75 0 0 0 0-11.5Z" />
@@ -53,8 +67,12 @@ function searchProducts() {
 </template>
 <style scoped>
 #header {
+    position: sticky;
+    z-index: 10;
+    top: 0;
     height: max-content;
     background-color: var(--color-surface-variant);
+    box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
 }
 
 .home-container {
@@ -62,6 +80,7 @@ function searchProducts() {
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
+    height: 4rem;
 }
 
 .home-container img {
@@ -94,10 +113,19 @@ function searchProducts() {
     padding-right: 1rem;
 }
 
+#header form .close {
+    rotate: 45deg;
+    display: none;
+}
+
 
 #header .search-phone {
     display: none;
     flex-grow: 1;
+}
+
+#header .search-phone button {
+    margin-left: auto;
 }
 
 #header .search input {
@@ -107,6 +135,10 @@ function searchProducts() {
     padding: 4px 24px;
     font-size: var(--medium-font);
     width: 100%;
+}
+
+#header .search-active {
+    display: block !important;
 }
 
 #header button {
@@ -155,6 +187,14 @@ function searchProducts() {
         z-index: 10;
         left: 1rem;
         right: 1rem;
+    }
+
+    #header form .close {
+        display: block;
+    }
+
+    #header form svg {
+        display: none;
     }
 
     #header .search-phone {
