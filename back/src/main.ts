@@ -3,7 +3,7 @@ import { generateId, stringToNumber } from './utils.js'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import MongoAPI from './mongo.js'
-import { CategoryData, ProductData, ScrapData } from './models.js'
+import { CategoryData, CategoryUpdate, ProductData, ScrapData } from './models.js'
 import startScrapping from './scraper.js'
 import bodyParser from 'body-parser'
 
@@ -46,6 +46,25 @@ app.post('/admin/*', async (req, res, next) => {
     }
 })
 
+app.put('/admin/*', async (req, res, next) => {
+    if (!isMongoConnected) {
+        res.status(400).send("Database connection error")
+    } else {
+        try {
+            let adminId = req.body.adminId
+            if (await isAdmin(adminId)) {
+                next()
+            } else {
+                res.status(403).send("You don't have access")
+            }
+
+        } catch (error) {
+            res.status(400).send(error)
+        }
+    }
+})
+
+
 app.get('/admin/scrap-url', async (req, res, next) => {
     if (!isMongoConnected) {
         res.status(400).send("Database connection error")
@@ -81,23 +100,6 @@ var isMongoConnected = await mongoAPI.connectMongoose(host!)
 app.get('/', (req, res) => {
     res.send('Hello World!')
 })
-
-// --------------------- Scrap -------------------
-
-app.get('/admin/scrap-url', async (req, res) => {
-
-    let url = req.query.url as string;
-    const data = await startScrapping(url)
-
-    if (data == null) {
-        res.status(400).send("Unable to scrap")
-    } else {
-        res.status(200).json(data)
-    }
-
-})
-
-
 
 
 app.get('/category-products', async (req, res) => {
@@ -152,13 +154,15 @@ app.post('/login', async (req, res) => {
 
         if (email != adminEmail) {
             res.status(400).send("Wrong email")
-        }else if(password != adminPassword){
+        } else if (password != adminPassword) {
             res.status(400).send("Wrong password")
-        }else{
-            res.status(200).json({id: adminAccountId})
+        } else {
+            res.status(200).json({ id: adminAccountId })
         }
     }
 })
+
+
 
 
 // --------------------- Category ------------------
@@ -229,11 +233,6 @@ app.post('/update-category-click', (req, res) => {
 
 
 
-
-
-
-
-
 // ------------------------ Admin -----------------------------
 
 app.post('/admin/category', async (req, res) => {
@@ -242,12 +241,12 @@ app.post('/admin/category', async (req, res) => {
     let isSlide = req.body.isSlide as boolean
     let imageUrl = req.body.url as string
 
-    if(isSlide == true){
+    if (isSlide == true) {
         let isExist = await mongoAPI.isSlideShowCategoryExist()
-        if(isExist == null){
+        if (isExist == null) {
             res.status(400).send("Something went wrong")
             return
-        }else if(isExist){
+        } else if (isExist) {
             res.status(400).send("Category already exist")
             return
         }
@@ -266,12 +265,48 @@ app.post('/admin/category', async (req, res) => {
     }
 
     const result = await mongoAPI.addCategory(data)
-    if(result == null){
+    if (result == null) {
         res.status(400).send("Bad request")
-    }else{
+    } else {
         res.status(200).send(result)
     }
 })
+
+app.put('/admin/category', async (req, res) => {
+
+    try {
+        let data = req.body.data as CategoryUpdate
+
+        const result = await mongoAPI.updateCategory(data)
+        if (result == null) {
+            res.sendStatus(400)
+        } else {
+            res.sendStatus(200)
+        }
+    } catch (error) {
+        console.log("Bad request")
+        res.status(400).send("Bad request")
+    }
+})
+
+
+// used for deletion
+app.put('/admin/category-delete', async(req, res) => {
+    try {
+        let categoryId = req.body.categoryId as number
+
+        const result = await mongoAPI.deleteCategory(categoryId)
+        if (result == null) {
+            res.sendStatus(400)
+        } else {
+            res.sendStatus(200)
+        }
+    } catch (error) {
+        console.log("Bad request")
+        res.status(400).send("Bad request")
+    }
+})
+
 
 
 async function isAdmin(adminId: string) {
@@ -286,6 +321,20 @@ async function isAdmin(adminId: string) {
 
     return false
 }
+
+
+app.get('/admin/scrap-url', async (req, res) => {
+
+    let url = req.query.url as string;
+    const data = await startScrapping(url)
+
+    if (data == null) {
+        res.status(400).send("Unable to scrap")
+    } else {
+        res.status(200).json(data)
+    }
+
+})
 
 
 app.post('/admin/product', async (req, res) => {
@@ -319,12 +368,12 @@ app.post('/admin/product', async (req, res) => {
         };
 
         const result = await mongoAPI.addProduct(product)
-        if(result == null){
+        if (result == null) {
             res.status(400).send("Bad request | category not found")
-        }else{
+        } else {
             res.status(200).send(result)
         }
-        
+
 
     } catch (error) {
         console.log(error);

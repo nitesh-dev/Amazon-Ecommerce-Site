@@ -1,5 +1,5 @@
 import mongoose, { Collection } from "mongoose";
-import { Category, CategoryData, HomeData, Product, ProductData, SimpleCategoryData, SimpleProductData } from "./models.js"
+import { Category, CategoryData, CategoryUpdate, HomeData, Product, ProductData, SimpleCategoryData, SimpleProductData } from "./models.js"
 
 class MongoAPI {
 
@@ -44,6 +44,38 @@ class MongoAPI {
 
 
     // --------- category ---------------
+
+    async updateCategory(data: CategoryUpdate) {
+        try {
+            const result = await Category.updateOne(
+                { categoryId: data.categoryId },
+                { $set: { name: data.name, imageUrl: data.imageUrl } }
+            ).lean();
+
+            if (result.modifiedCount == 0) {
+                return null
+            }
+            return 1
+        } catch (error) {
+            console.error('Error saving product:', error);
+            return null
+        }
+    }
+
+    async deleteCategory(categoryId: number) {
+        try {
+            const result = await Category.deleteOne({categoryId: categoryId})
+            if (result.deletedCount == 0) {
+                return null
+            }else{
+                await Product.deleteMany({categoryId: categoryId})
+            }
+            return 1
+        } catch (error) {
+            console.error('Error saving product:', error);
+            return null
+        }
+    }
 
     async addCategory(categoryData: CategoryData) {
 
@@ -214,9 +246,9 @@ class MongoAPI {
             const product = await Product
                 .find({
                     $or: [
-                      { name: { $regex: search, $options: 'i' } }
+                        { name: { $regex: search, $options: 'i' } }
                     ]
-                  })
+                })
                 .select('-_id categoryId productId views name rating reviewCount price discountPrice imageUrl slideImageUrl')
                 .sort({ views: -1 })
                 .limit(limit) as SimpleProductData[]

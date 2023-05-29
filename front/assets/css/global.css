@@ -204,7 +204,7 @@ body {
 
 .table-holder {
     margin-top: 5rem;
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 
 .table-holder input,
@@ -230,6 +230,15 @@ body {
     border-radius: var(--radius-medium);
 }
 
+.table-holder table *{
+    white-space: nowrap;
+}
+
+.table-holder table .name{
+    min-width: 500px;
+    white-space: normal;
+}
+
 .table-holder thead {
     box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
     position: relative;
@@ -247,6 +256,8 @@ body {
 }
 
 .table-holder td button {
+    margin: auto;
+    display: block;
     border: none;
     background-color: transparent;
 }
@@ -257,6 +268,10 @@ body {
 
 .table-holder td .delete svg {
     fill: var(--color-error);
+}
+
+.table-holder td .update svg {
+    fill: var(--color-secondary);
 }
 
 .table-holder td button:hover {

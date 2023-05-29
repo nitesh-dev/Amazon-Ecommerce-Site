@@ -1,4 +1,4 @@
-import { CategoryData, HomeData, ProductData, ScrapData, SimpleProductData } from "./apiDataType"
+import { CategoryData, CategoryUpdate, HomeData, ProductData, ProductUpdate, ScrapData, SimpleProductData } from "./apiDataType"
 
 interface Result<T> {
     type(account_id: string, type: any): unknown
@@ -60,8 +60,8 @@ namespace Api {
 
     export async function loginIn(email: string, password: string) {
         let login = {
-           email: email,
-           password: password
+            email: email,
+            password: password
 
         }
         return post("login", "", login)
@@ -90,6 +90,36 @@ namespace Api {
 
         }
         return post("admin/product", "", productData)
+    }
+
+
+    export async function updateCategory(adminId: string, data: CategoryUpdate) {
+
+        let updateData = {
+            adminId: adminId,
+            data: data
+
+        }
+        return put("admin/category", "", updateData)
+    }
+
+
+    export async function deleteCategory(adminId: string, categoryId: number){
+        let data = {
+            adminId: adminId,
+            categoryId: categoryId
+        }
+        return put("admin/category-delete", "", data)
+    }
+
+    
+    export async function updateProduct(adminId: string, data: ProductUpdate) {
+
+        let updateData = {
+            adminId: adminId,
+            data: data
+        }
+        return put("admin/product", "", updateData)
     }
 
 
@@ -173,6 +203,31 @@ namespace Api {
                 return createResult(null, true, await res.text())
             }
         } catch (error) {
+            return createResult<T>(null, true, "fetch error")
+        }
+    }
+
+    async function put<T>(path: string, query: string, body: any) {
+        const requestOptions: RequestInit = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            method: "PUT",
+            redirect: "follow",
+            body: JSON.stringify(body),
+        };
+
+        // console.log(`${apiURL}/${path}?${query}`)
+
+        try {
+            const res = await fetch(`${apiURL}/${path}?${query}`, requestOptions);
+            if (res.ok) {
+                return createResult<string>('', false)
+            } else {
+                return createResult(null, true, '')
+            }
+        } catch (error) {
+            console.log(error)
             return createResult<T>(null, true, "fetch error")
         }
     }

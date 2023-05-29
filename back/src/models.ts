@@ -25,7 +25,7 @@ export class ScrapData {
   featureImages: string[] = []
   landingImages: string[] = []
 
-  toObject(data: ScrapData){
+  toObject(data: ScrapData) {
     this.scrapUrl = data.scrapUrl
     this.info = data.info
     this.smallInfo = data.smallInfo
@@ -50,7 +50,28 @@ export class ScrapData {
 }
 
 
-export interface SimpleProductData{
+export interface CategoryUpdate{
+  categoryId: number,
+  name: string,
+  imageUrl: string
+}
+
+
+export interface ProductUpdate{
+  productId: number,
+  name: string,
+  rating: number,
+  reviewCount: number,
+  price: number,
+  discountPrice: number,
+  affiliateUrl: string,
+  allDetail: string,
+  slideImageUrl: string
+
+}
+
+
+export interface SimpleProductData {
   categoryId: number,
   productId: number,
   views: number,
@@ -70,8 +91,8 @@ export interface SimpleCategoryData {
   count: number,
   isSlide: boolean
 }
-export interface HomeData{
-  category: SimpleCategoryData, 
+export interface HomeData {
+  category: SimpleCategoryData,
   products: SimpleProductData[]
 }
 
@@ -113,7 +134,7 @@ const productSchema = new Schema({
   allDetail: { type: String, required: true },
   imageUrl: { type: String, required: true },
   scrapUrl: { type: String, required: true },
-  slideImageUrl: { type: String},
+  slideImageUrl: { type: String },
 
 });
 
@@ -143,7 +164,7 @@ const categorySchema = new Schema({
   views: { type: Number, required: true },
   createAt: { type: Number, required: true },
   name: { type: String, required: true },
-  imageUrl: { type: String},
+  imageUrl: { type: String },
   count: { type: Number, required: true },
   isSlide: { type: Boolean, required: true },
 

@@ -46,6 +46,25 @@ export interface CategoryData {
   isSlide: boolean
 }
 
+export interface CategoryUpdate{
+  categoryId: number,
+  name: string,
+  imageUrl: string
+}
+
+
+export interface ProductUpdate{
+  productId: number,
+  name: string,
+  rating: number,
+  reviewCount: number,
+  price: number,
+  discountPrice: number,
+  affiliateUrl: string,
+  allDetail: string,
+  slideImageUrl: string
+
+}
 
 export interface ProductData {
   categoryId: number,
