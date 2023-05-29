@@ -17,8 +17,8 @@ onMounted(function () {
     intervalId = setTimeout(nextSlide, 4000);
 })
 
-onUnmounted(function(){
-    if(intervalId != null) clearTimeout(intervalId)
+onUnmounted(function () {
+    if (intervalId != null) clearTimeout(intervalId)
     intervalId = null
 })
 
@@ -33,11 +33,11 @@ function showSlide() {
     const slideWidth = sliderContainer.offsetWidth;
     const scrollX = slideWidth * currentSlide.value;
     sliderContainer.scrollLeft = scrollX;
-    
+
 }
 
 function nextSlide() {
-    if(intervalId != null) clearTimeout(intervalId)
+    if (intervalId != null) clearTimeout(intervalId)
     intervalId = setTimeout(nextSlide, 4000)
 
     sliderChildren = document.querySelectorAll("#slider-container .image-holder")
@@ -48,7 +48,7 @@ function nextSlide() {
 }
 
 function previousSlide() {
-    if(intervalId != null) clearTimeout(intervalId)
+    if (intervalId != null) clearTimeout(intervalId)
     intervalId = setTimeout(nextSlide, 4000)
 
     sliderChildren = document.querySelectorAll("#slider-container .image-holder")
@@ -59,7 +59,7 @@ function previousSlide() {
 }
 
 
-function openProduct(id: number){
+function openProduct(id: number) {
     location.href = `/product?productId=${id}`
 }
 
@@ -76,7 +76,8 @@ function openProduct(id: number){
             </button>
             <div id="slider-container" class="image-container">
 
-                <div v-for="product, index in slideshowData?.products" :key="index"  @click="openProduct(product.productId)" class="image-holder">
+                <div v-for="product, index in slideshowData?.products" :key="index" @click="openProduct(product.productId)"
+                    class="image-holder">
                     <img :src="product.slideImageUrl" :alt="product.name">
                 </div>
 
@@ -113,7 +114,7 @@ function openProduct(id: number){
     border: none;
     outline: none;
     border-radius: 0;
-    height: 60px;
+    padding: 1rem 0.2rem;
     background-color: rgb(255, 255, 255);
 }
 
@@ -139,34 +140,35 @@ function openProduct(id: number){
 
 .image-holder img {
     width: 100%;
-    height: 300px;
-    object-fit: cover;
-
-    border-radius: 8px;
+    height: auto;
 }
 
 
 .marker-container {
     margin-top: 16px;
     display: flex;
-    gap: 4px;
+    gap: 0.3rem;
     justify-content: center;
 }
 
 .marker-container div {
-    width: 20px;
-    height: 4px;
+    width: 0.5rem;
+    height: 0.2rem;
     background-color: var(--color-surface-dark);
 }
 
 .marker-container .active {
-    width: 30px;
+    width: 1rem;
     background-color: var(--color-primary);
 }
 
 @media only screen and (max-width: 800px) {
     .slideshow {
-        margin: 2rem 1rem;
+        margin: 0 !important;
+    }
+
+    .slideshow .image-container-holder>button {
+        background-color: transparent;
     }
 }
 </style>

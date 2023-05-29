@@ -1,12 +1,12 @@
 <script setup lang='ts'>
 
 const props = defineProps({
-  name: String,
-  imageUrl: String,
-  rating: Number,
-  reviewCount: Number,
-  disPrice: Number,
-  price: Number
+    name: String,
+    imageUrl: String,
+    rating: Number,
+    reviewCount: Number,
+    disPrice: Number,
+    price: Number
 })
 
 
@@ -107,7 +107,7 @@ function urlToLandingUrl(url: string) {
 
 
 .rating img {
-    width: 20px;
+    width: 1rem;
     height: auto;
 }
 
@@ -144,7 +144,14 @@ function urlToLandingUrl(url: string) {
         margin-right: 0.6rem;
     }
 
+    .rating img {
+        width: 0.8rem;
+    }
+
+    .rating span {
+        font-size: var(--small-font);
+        color: inherit;
+    }
+
 }
-
-
 </style>

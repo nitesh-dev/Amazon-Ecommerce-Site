@@ -7,7 +7,7 @@
                 <div class="left">
                     <div class="header">
                         <div>
-                            <img src="../icons/shop.png" alt="">
+                            <img src="../public/icons/shop.png" alt="shop cart icon">
                         </div>
                         <h2>Shopcart</h2>
                     </div>

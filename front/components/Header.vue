@@ -13,7 +13,7 @@ function searchProducts() {
     <div id="header">
         <div class="container">
             <div class="home-container">
-                <img src="../icons/shop.png" alt="">
+                <img src="../public/icons/shop.png" alt="">
                 <NuxtLink class="home" to="/">
                     <h2>ShopCart</h2>
                 </NuxtLink>

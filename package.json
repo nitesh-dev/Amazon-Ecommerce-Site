@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@nuxtjs/google-fonts": "^3.0.1"
+  }
+}
