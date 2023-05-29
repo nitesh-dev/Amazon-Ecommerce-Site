@@ -5,7 +5,6 @@ import { stringToNumber } from './utils.js';
 export default async function startScrapping(url: string) {
 
     let html = await fetchHtml(url)
-    console.log(html)
     if (html.isSuccess == true) {
         console.log("url extracted")
         let json = await scrapData(html.data as string, url)
