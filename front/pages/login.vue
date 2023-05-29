@@ -62,38 +62,26 @@ async function loginIn() {
     </div>
 </template>
 <style scoped>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-}
-
-body {
-    background: #e35869;
-    font-family: 'Rubik', sans-serif;
-}
 
 .login-form {
-    background: #fff;
-    width: 500px;
-    margin: 65px auto;
-    display: -webkit-box;
+    background-color: var(--color-surface);
     display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    flex-direction: column;
-    border-radius: 4px;
-    box-shadow: 0 2px 25px rgba(0, 0, 0, 0.2);
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
 }
 
-.login-form h1 {
-    padding: 35px 35px 0 35px;
-    font-weight: 300;
+.login-form form{
+    max-width: 500px;
+    width: 100%;
+    margin: 1rem;
+    background-color: var(--color-surface-variant);
+    padding: 1rem;
+    border-radius: var(--radius-medium);
 }
+
 
 .login-form .content {
-    padding: 35px;
     text-align: center;
 }
 
@@ -104,7 +92,6 @@ body {
 .login-form .input-field input {
     font-size: 16px;
     display: block;
-    font-family: 'Rubik', sans-serif;
     width: 100%;
     padding: 10px 1px;
     border: 0;
@@ -115,10 +102,10 @@ body {
 }
 
 .login-form .action button {
+    margin-top: 2rem;
     height: 3.5rem;
     width: 100%;
     border: none;
-    font-family: 'Rubik', sans-serif;
     cursor: pointer;
     text-transform: uppercase;
     background: var(--color-primary);

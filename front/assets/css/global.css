@@ -41,7 +41,7 @@ h1,
 h2,
 h3,
 h4 {
-    font-weight: 600;
+    font-weight: 400;
 }
 
 h2 {
@@ -81,6 +81,10 @@ body {
 @media only screen and (max-width: 800px) {
     .container {
         padding: 0;
+    }
+
+    .loader {
+        scale: 0.6;
     }
 }
 
@@ -232,7 +236,7 @@ body {
 
 .table-holder th {
     padding: 1em;
-    font-weight: 600;
+    font-weight: 400;
     color: var(--color-primary);
 }
 
