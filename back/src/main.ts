@@ -137,7 +137,28 @@ app.get('/search', async (req, res) => {
 })
 
 
+app.post('/login', async (req, res) => {
+    let email = req.body.email as string
+    let password = req.body.password as string
+    console.log(email + "   " + password)
 
+    let admin = await mongoAPI.getAdmin()
+    if (admin == null) {
+        res.status(400).send("Something went wrong!")
+    } else {
+        let adminEmail = (admin as any).email
+        let adminPassword = (admin as any).password
+        let adminAccountId = (admin as any).accountId
+
+        if (email != adminEmail) {
+            res.status(400).send("Wrong email")
+        }else if(password != adminPassword){
+            res.status(400).send("Wrong password")
+        }else{
+            res.status(200).json({id: adminAccountId})
+        }
+    }
+})
 
 
 // --------------------- Category ------------------

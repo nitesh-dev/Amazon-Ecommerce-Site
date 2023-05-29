@@ -58,6 +58,14 @@ namespace Api {
         post("update-category-click", "", data)
     }
 
+    export async function loginIn(email: string, password: string) {
+        let login = {
+           email: email,
+           password: password
+
+        }
+        return post("login", "", login)
+    }
 
     export async function addCategory(adminId: string, categoryName: string, isSlide: boolean, imageUrl: string) {
         let categoryData = {

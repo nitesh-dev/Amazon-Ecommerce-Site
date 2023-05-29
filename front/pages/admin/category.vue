@@ -16,8 +16,6 @@ const categories = ref<CategoryData[]>()
 
 
 onMounted(function () {
-    // temp
-    localStorage.setItem("adminId", "abc12345")
 
     adminId = getAdminId()
     if (adminId == null) {

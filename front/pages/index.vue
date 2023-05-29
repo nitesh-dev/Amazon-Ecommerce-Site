@@ -53,6 +53,7 @@ function updateCategoryClick(categoryId: number) {
 }
 
 
+
 </script>
 <template>
     <div class="loader-holder" v-if="!isLoaded">
