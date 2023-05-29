@@ -173,6 +173,25 @@ app.get('/home', async (req, res) => {
 
 })
 
+app.post('/update-product-click', (req, res) => {
+
+    let productId = req.body.productId as number
+    console.log("product click updated: " + productId)
+    mongoAPI.updateProductClick(productId)
+
+    res.sendStatus(200)
+})
+
+
+app.post('/update-category-click', (req, res) => {
+
+    let categoryId = req.body.categoryId as number
+    console.log("category click updated: " + categoryId)
+    mongoAPI.updateCategoryClick(categoryId)
+
+    res.sendStatus(200)
+})
+
 
 
 

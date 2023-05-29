@@ -60,7 +60,7 @@ class MongoAPI {
     async isSlideShowCategoryExist() {
         try {
             const category = await Category.findOne({ name: 'SlideShow' }).lean()
-            if(category == null){
+            if (category == null) {
                 return false
             }
             return true
@@ -73,10 +73,14 @@ class MongoAPI {
 
     async getCategory(categoryId: number) {
         try {
-            const category = await Category.findOne({ categoryId: categoryId }).select({ _id: 0, __v: 0 }).lean()
-            console.log("fetch category")
-            return category;
-
+            const updatedCategory = await Category.findOneAndUpdate(
+                { categoryId: categoryId },
+                { $inc: { views: 1 } }, // Increment the 'views' field by 1
+                { new: true } // Return the updated category
+            )
+                .select({ _id: 0, __v: 0 }) // Exclude the _id and __v fields
+                .lean();
+            return updatedCategory
         } catch (error) {
             console.error('Error saving product:', error);
             return null
@@ -142,13 +146,39 @@ class MongoAPI {
 
     async getProduct(productId: number) {
         try {
-            const product = await Product.findOne({ productId: productId });
+            const product = await Product.findOneAndUpdate(
+                { productId: productId },
+                { $inc: { views: 1 } }, // Increment the 'views' field by 1
+                { new: true } // Return the updated category
+            )
             console.log("fetch product")
             return product;
 
         } catch (error) {
             console.error('Error saving product:', error);
             return null
+        }
+    }
+
+    updateProductClick(productId: number){
+        try {
+            Product.findOneAndUpdate(
+                { productId: productId },
+                { $inc: { clicks: 1 } }
+            ).exec()
+        } catch (error) {
+            console.error('Error saving product:', error);
+        }
+    }
+
+    updateCategoryClick(categoryId: number){
+        try {
+            Category.findOneAndUpdate(
+                { categoryId: categoryId },
+                { $inc: { clicks: 1 } }
+            ).exec()
+        } catch (error) {
+            console.error('Error saving product:', error);
         }
     }
 

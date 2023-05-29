@@ -41,6 +41,21 @@ namespace Api {
     }
 
 
+    export async function updateProductClick(productId: number) {
+        let data = {
+            productId: productId
+        }
+        post("update-product-click", "", data)
+    }
+
+    export async function updateCategoryClick(categoryId: number) {
+        let data = {
+            categoryId: categoryId
+        }
+        post("update-category-click", "", data)
+    }
+
+
     export async function addCategory(adminId: string, categoryName: string, isSlide: boolean, imageUrl: string) {
         let categoryData = {
             adminId: adminId,

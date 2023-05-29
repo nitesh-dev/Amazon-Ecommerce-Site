@@ -92,6 +92,11 @@ function getStarImage(max: number) {
 }
 
 
+function updateProductClick(productId: number | undefined){
+    if(productId == undefined) return
+    Api.updateProductClick(productId)
+}
+
 
 </script>
 <template>
@@ -137,7 +142,7 @@ function getStarImage(max: number) {
                     <span>₹{{ productData?.price.toLocaleString() }}</span>
 
                 </div>
-                <a :href="productData?.affiliateUrl">Buy from Amazon</a>
+                <a @click="updateProductClick(productData?.productId)" target="_blank" :href="productData?.affiliateUrl">Buy from Amazon</a>
 
                 <hr>
                 <table>

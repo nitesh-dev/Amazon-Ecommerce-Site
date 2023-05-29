@@ -49,6 +49,10 @@ function getPopularCount(categoryData: HomeData[]) {
     }
 }
 
+function updateCategoryClick(categoryId: number){
+    Api.updateCategoryClick(categoryId)
+}
+
 
 </script>
 <template>
@@ -70,7 +74,7 @@ function getPopularCount(categoryData: HomeData[]) {
                 <h1 class="responsive-margin">Popular Categories</h1>
                 <hr>
                 <div class="category-div responsive-margin">
-                    <NuxtLink :to="`/category?categoryId=${categoryData[index - 1]?.category.categoryId}`"
+                    <a target="_blank" @click="updateCategoryClick(categoryData[index - 1]?.category.categoryId)" :href="`/category?categoryId=${categoryData[index - 1]?.category.categoryId}`"
                         v-for="index in getPopularCount(categoryData)">
                         <div>
                             <div class="image-container">
@@ -82,7 +86,7 @@ function getPopularCount(categoryData: HomeData[]) {
                                 <p>{{ categoryData[index - 1]?.category.count }} items</p>
                             </div>
                         </div>
-                    </NuxtLink>
+                    </a>
 
                 </div>
             </div>
@@ -93,13 +97,13 @@ function getPopularCount(categoryData: HomeData[]) {
         <div class="container products">
             <h2 class="responsive-margin">{{ category.category.name }}</h2>
             <div class="card-container responsive-margin">
-                <NuxtLink v-for="item in category.products" :to="`/product?productId=${item.productId}`">
+                <a target="_blank" v-for="item in category.products" :href="`/product?productId=${item.productId}`">
                     <ProductCard :name="item.name" :imageUrl="item.imageUrl" :rating="item.rating"
                         :reviewCount="item.reviewCount" :disPrice="item.discountPrice" :price="item.price" />
-                </NuxtLink>
+                </a>
 
 
-                <NuxtLink :to="`/category?categoryId=${category.category.categoryId}`" v-if="category.category.count > 7">
+                <a target="_blank" @click="updateCategoryClick(category.category.categoryId)" :href="`/category?categoryId=${category.category.categoryId}`" v-if="category.category.count > 7">
                     <div class="show-more">
                         <svg width="24" height="24" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -107,8 +111,7 @@ function getPopularCount(categoryData: HomeData[]) {
                         </svg>
                         <span>View All</span>
                     </div>
-                </NuxtLink>
-
+                </a>
             </div>
         </div>
     </section>

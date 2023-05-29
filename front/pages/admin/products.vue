@@ -443,7 +443,7 @@ function adjustTextareaHeight(target: EventTarget | null) {
                         <tr v-for="product, index in allProducts">
                             <td>{{ index }}</td>
                             <td>{{ product.productId }}</td>
-                            <td>{{ product.name }}</td>
+                            <td class="name">{{ product.name }}</td>
                             <td>{{ product.clicks }}</td>
                             <td>{{ product.views }}</td>
                             <td>{{ unixMillisecondsToDateString(product.createAt) }}</td>
