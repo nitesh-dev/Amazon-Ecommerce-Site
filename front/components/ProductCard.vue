@@ -29,7 +29,7 @@ function urlToLandingUrl(url: string) {
     const lastIndex = url.lastIndexOf('.')
     const left = url.slice(0, lastIndex)
     const right = url.slice(lastIndex + 1, url.length)
-    const modifiedUrl = left + "._SX522_." + right
+    const modifiedUrl = left + "._SX480_." + right
     console.log(modifiedUrl)
     return modifiedUrl
 }
