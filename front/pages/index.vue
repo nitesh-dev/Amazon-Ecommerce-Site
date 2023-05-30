@@ -184,7 +184,7 @@ function updateCategoryClick(categoryId: number) {
 
 .card-container {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 25% 25% 25% 25%;
     justify-content: center;
     gap: 1rem;
     margin-bottom: 2rem;
@@ -255,7 +255,7 @@ a {
 
 .category-div {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 33.3% 33.3% 33.3%;
     gap: 1rem;
 }
 
@@ -309,13 +309,13 @@ a {
 
 @media only screen and (max-width: 1000px) {
     .card-container {
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 33.3% 33.3% 33.3%;
     }
 }
 
 @media only screen and (max-width: 800px) {
     .category-div {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 50% 50%;
     }
 
     .slideshow {
@@ -323,13 +323,13 @@ a {
     }
 
     .card-container {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 50% 50%;
     }
 }
 
 @media only screen and (max-width: 600px) {
     .category-div {
-        grid-template-columns: 1fr;
+        grid-template-columns: 100%;
         gap: 0.4rem;
     }
 
