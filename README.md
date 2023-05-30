@@ -73,6 +73,12 @@ scrapeAmazonListings(amazonUrl)
   });
 
 ```
+
+## Screenshorts
+<img width="1680" alt="Screenshot 2023-05-31 at 3 19 24 AM" src="https://github.com/StartCodeingWithSayam/Amazon-Ecommerce-Site/assets/92935635/85829b84-fe6e-4360-800b-303013cb03c4"><img width="1680" alt="Screenshot 2023-05-31 at 3 20 06 AM" src="https://github.com/StartCodeingWithSayam/Amazon-Ecommerce-Site/assets/92935635/c3f8502b-010f-4b83-83ac-c340c2e8f3f0">
+<img width="1680" alt="Screenshot 2023-05-31 at 3 20 15 AM" src="https://github.com/StartCodeingWithSayam/Amazon-Ecommerce-Site/assets/92935635/858c8d0f-8c51-4470-b456-3e97fadd4e81">
+
+
 ## Contributers
 
 - [@Nitish kumar](https://github.com/nitish-dev) [Back end developer]
