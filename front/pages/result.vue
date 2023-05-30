@@ -108,7 +108,7 @@ a {
     background-color: var(--color-surface-variant);
     border-radius: var(--radius-medium);
     display: grid;
-    grid-template-columns: 1.5fr 4fr;
+    grid-template-columns: 25% 75%;
 }
 
 .result-card .image-holder {
@@ -119,10 +119,9 @@ a {
 }
 
 .result-card .image-holder img {
-    width: 180px;
-    height: 180px;
-    margin: 2rem 0;
-    object-fit: contain;
+    width: 80%;
+    height: auto;
+    object-fit: fill;
     mix-blend-mode: multiply;
 }
 
@@ -192,13 +191,13 @@ a {
     }
 
     .result-card .image-holder img {
-        width: 60%;
-        margin: 2rem 1rem;
+        width: 80%;
         height: auto;
+
     }
 
     .result-card {
-        grid-template-columns: 2fr 4fr;
+        grid-template-columns: 33.3% 66.6%;
     }
 
     .pricing span:first-child {
