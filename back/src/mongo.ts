@@ -139,7 +139,9 @@ class MongoAPI {
 
     async getAllCategory() {
         try {
-            const categories = await Category.find().select({ _id: 0, __v: 0 }).lean()
+            const categories = await Category.find()
+            .sort({ views: -1 })
+            .select({ _id: 0, __v: 0 }).lean()
             return categories;
 
         } catch (error) {
@@ -150,7 +152,11 @@ class MongoAPI {
 
     async getAllSimpleCategory() {
         try {
-            const categories = await Category.find().select('-_id categoryId name imageUrl count isSlide').lean()
+            const categories = await Category
+            .find()
+            .sort({ views: -1 })
+            .select('-_id categoryId name imageUrl count isSlide')
+            .lean()
             return categories as SimpleCategoryData[];
 
         } catch (error) {
@@ -242,6 +248,7 @@ class MongoAPI {
             if (limit == 0) {
                 const product = await Product
                     .find({ categoryId: categoryId })
+                    .sort({ views: -1 })
                 return product;
 
             } else {
