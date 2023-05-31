@@ -210,7 +210,7 @@ async function onDeleteSubmit(categoryId: number, name: string, target: EventTar
                         <td>{{ unixMillisecondsToDateString(category.createAt) }}</td>
                         <td>{{ category.isSlide }}</td>
                         <td>
-                            <button v-if="index != 0" @click="setupUpdateCategoryData(category)">
+                            <button v-if="category.name != 'SlideShow'" @click="setupUpdateCategoryData(category)">
                                 <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -228,7 +228,7 @@ async function onDeleteSubmit(categoryId: number, name: string, target: EventTar
                             </button>
                         </td>
                         <td>
-                            <template v-if="index != 0">
+                            <template v-if="category.name != 'SlideShow'">
                                 <button class="delete" @click="onDeleteSubmit(category.categoryId, category.name, $event.target)">
                                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24"
                                         xmlns="http://www.w3.org/2000/svg">
