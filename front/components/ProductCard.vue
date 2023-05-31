@@ -60,6 +60,7 @@ function urlToLandingUrl(url: string) {
     background-color: var(--color-surface);
     border-radius: var(--radius-medium);
     border: 1px solid var(--color-surface-dark);
+    height: 100%;
 }
 
 .category-card .top {
@@ -89,8 +90,8 @@ function urlToLandingUrl(url: string) {
 }
 
 .category-card .top img {
-    width: 70%;
-    height: 70%;
+    width: 80%;
+    height: 80%;
     object-fit: contain;
     mix-blend-mode: multiply;
 }

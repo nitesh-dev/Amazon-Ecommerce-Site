@@ -70,14 +70,21 @@ async function loginIn() {
     align-items: center;
     justify-content: center;
 }
+.login-form h1{
+    text-align: center;
+    font-size: 2.4rem;
+    font-weight: 800 !important;
+    margin-bottom: 1rem;
+    color:var(--color-primary)
+}
 
 .login-form form{
     max-width: 500px;
     width: 100%;
     margin: 1rem;
     background-color: var(--color-surface-variant);
-    padding: 1rem;
-    border-radius: var(--radius-medium);
+    padding: 1.2rem;
+    border-radius: 1rem;
 }
 
 
@@ -95,8 +102,10 @@ async function loginIn() {
     width: 100%;
     padding: 10px 1px;
     border: 0;
-    border-bottom: 1px solid #747474;
+    border: 1px solid var(--color-surface-dark);
     outline: none;
+    border-radius: 10px;
+    padding: 1rem 1.4rem;
     -webkit-transition: all .2s;
     transition: all .2s;
 }
@@ -110,8 +119,10 @@ async function loginIn() {
     text-transform: uppercase;
     background: var(--color-primary);
     color: white;
-    border-bottom-left-radius: var(--radius-medium);
-    border-bottom-right-radius: var(--radius-medium);
+    font-size: var(--medium2-font);
+    font-weight: 600;
+    border-radius: var(--radius-medium);
+    box-shadow: 0 5px 10px 0 #3086c855;
     letter-spacing: 0.2px;
     outline: 0;
     -webkit-transition: all .3s;
