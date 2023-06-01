@@ -20,8 +20,6 @@ var adminId: string | null = null
 
 var isSlideshow = ref(false)
 onMounted(function () {
-    // temp
-    localStorage.setItem("adminId", "abc12345")
 
     let mode = openedMode()
     if(mode == null){
